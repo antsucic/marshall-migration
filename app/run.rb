@@ -9,13 +9,18 @@ begin
     port: ENV['DATABASE_PORT'],
   }
 
-  # Initialize connection object.
   connection = PG::Connection.new(**parameters)
-  puts 'Successfully created connection to database'
 
-  # Run query
-  connection.exec('DROP TABLE IF EXISTS inventory;')
-  puts 'Finished dropping table (if existed).'
+  processes = %w[extract transform load]
+  processes.each do |process|
+    puts "[[[ Starting #{process} process ]]]"
+    Dir.glob("**/#{process}.sql") do |path|
+      puts "-----> Running #{path} script!"
+      connection.exec(File.open(path).read)
+    end
+
+    puts "[[[ #{process.capitalize} process finished ]]]"
+  end
 
 rescue PG::Error => error
   puts error.message

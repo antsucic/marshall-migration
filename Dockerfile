@@ -41,3 +41,5 @@ RUN bundle install --jobs 20 --retry 5
 
 # Adding project files
 COPY . $ROOT_DIR
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
