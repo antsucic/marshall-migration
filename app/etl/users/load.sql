@@ -1,7 +1,3 @@
-ALTER TABLE public.users
-    ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(50)
-;
-
 INSERT INTO public.users
 (
     email
@@ -24,8 +20,4 @@ SELECT
     , legacy_id
 FROM
     transform.users
-;
-
-ALTER TABLE public.users
-    DROP COLUMN IF EXISTS legacy_id
 ;

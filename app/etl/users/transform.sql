@@ -1,15 +1,3 @@
-DROP TABLE IF EXISTS transform.users;
-CREATE TABLE transform.users (
-    legacy_id VARCHAR(50) UNIQUE NOT NULL
-    , email VARCHAR (255) UNIQUE NOT NULL
-    , first_name VARCHAR (255) NOT NULL
-    , last_name VARCHAR (255) NOT NULL
-    , status VARCHAR(20)
-    , "role" VARCHAR(20)
-    , created_at TIMESTAMP
-    , updated_at TIMESTAMP
-);
-
 INSERT INTO transform.users
 (
     legacy_id
@@ -34,14 +22,13 @@ SELECT
         WHEN '2' THEN 'active'
         ELSE 'inactive'
     END
-    , CASE parent_entity_id
-        WHEN 'SYS_USERS1' THEN CASE legacy_id
-            WHEN 'SYS_USERS1' THEN 'admin'
-            ELSE 'owner'
-        END
+    , CASE
+        WHEN parent_entity_id IN ('SYS_USERS1', 'SYS_USERS2') AND legacy_id = parent_entity_id THEN 'admin'
+        WHEN parent_entity_id IN ('SYS_USERS1', 'SYS_USERS2') THEN 'owner'
         ELSE 'organization_user'
     END
     , created_at
     , updated_at
 FROM
     staging.users
+;

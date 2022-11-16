@@ -1,15 +1,3 @@
-DROP TABLE IF EXISTS staging.users;
-CREATE TABLE staging.users (
-    legacy_id VARCHAR
-    , email VARCHAR
-    , first_name VARCHAR
-    , last_name VARCHAR
-    , status VARCHAR
-    , parent_entity_id VARCHAR
-    , created_at TIMESTAMP
-    , updated_at TIMESTAMP
-);
-
 INSERT INTO staging.users
 (
     legacy_id
@@ -32,3 +20,4 @@ SELECT
     , legacy."Last_Edit_DateTime"
 FROM
     legacy."Entities" legacy
+;

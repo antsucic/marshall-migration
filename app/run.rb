@@ -1,22 +1,17 @@
+require_relative 'lib'
 require 'pg'
 
 begin
-  parameters = {
-    host: ENV['DATABASE_HOST'],
-    dbname: ENV['DATABASE_NAME'],
-    user: ENV['DATABASE_USERNAME'],
-    password: ENV['DATABASE_PASSWORD'],
-    port: ENV['DATABASE_PORT'],
-  }
+  connection = PG::Connection.new(**connection_parameters)
 
-  connection = PG::Connection.new(**parameters)
-
-  processes = %w[extract transform load]
   processes.each do |process|
     puts "[[[ Starting #{process} process ]]]"
+
+    load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") } if process == :load
+    next if process == :load
+
     Dir.glob("**/#{process}.sql") do |path|
-      puts "-----> Running #{path} script!"
-      connection.exec(File.open(path).read)
+      run_script(connection, path)
     end
 
     puts "[[[ #{process.capitalize} process finished ]]]"
