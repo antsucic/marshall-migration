@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS transform.users;
 
 CREATE TABLE staging.users (
     legacy_id VARCHAR
+    , legacy_source VARCHAR(100)
     , email VARCHAR
     , first_name VARCHAR
     , last_name VARCHAR
@@ -14,6 +15,7 @@ CREATE TABLE staging.users (
 
 CREATE TABLE transform.users (
     legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
     , email VARCHAR
     , first_name VARCHAR
     , last_name VARCHAR
@@ -27,4 +29,5 @@ TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;
 
 ALTER TABLE public.users
     ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(36)
+    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
 ;

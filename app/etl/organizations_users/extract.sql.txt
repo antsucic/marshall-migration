@@ -1,6 +1,7 @@
 INSERT INTO staging.organizations_users
 (
     legacy_organization_id
+    , legacy_source
     , legacy_user_id
     , phone
     , mobile_phone
@@ -8,10 +9,10 @@ INSERT INTO staging.organizations_users
 )
 SELECT
     entities."Organization_Id"
+    , '#{source}'
     , entities."Id"
     , entities."Work_Phone"
     , entities."Cell_Phone"
     , entities."Location_Id"
 FROM
-    legacy."Entities" entities
-;
+    "#{source}"."Entities" entities

@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS transform.organizations;
 
 CREATE TABLE staging.organizations (
     legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
     , legacy_location_id VARCHAR(36)
     , "name" VARCHAR
     , created_at TIMESTAMP
@@ -11,6 +12,7 @@ CREATE TABLE staging.organizations (
 
 CREATE TABLE transform.organizations (
     legacy_ids VARCHAR
+    , legacy_source VARCHAR(100)
     , legacy_location_ids VARCHAR
     , "name" VARCHAR
     , created_at TIMESTAMP

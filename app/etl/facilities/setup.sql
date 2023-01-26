@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS transform.facilities;
 
 CREATE TABLE staging.facilities (
     legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
     , legacy_company_id VARCHAR(36)
     , legacy_location_id VARCHAR(36)
     , legacy_thumbnail_id VARCHAR(36)
@@ -14,6 +15,7 @@ CREATE TABLE staging.facilities (
 
 CREATE TABLE transform.facilities (
     legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
     , legacy_company_id VARCHAR(36)
     , legacy_location_id VARCHAR(36)
     , legacy_thumbnail_id VARCHAR(36)
@@ -28,4 +30,5 @@ TRUNCATE TABLE public.facilities RESTART IDENTITY CASCADE;
 
 ALTER TABLE public.facilities
     ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(36)
+    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
 ;

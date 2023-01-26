@@ -1,6 +1,7 @@
 INSERT INTO staging.facilities
 (
     legacy_id
+    , legacy_source
     , legacy_company_id
     , legacy_location_id
     , legacy_thumbnail_id
@@ -11,6 +12,7 @@ INSERT INTO staging.facilities
 )
 SELECT
     products."Id"
+    , '#{source}'
     , owners."Company_Id"
     , companies."Location_Id"
     , products."Thumbnail_File_Id"
@@ -19,12 +21,12 @@ SELECT
     , products."Status"
     , products."Enter_Date"
 FROM
-    legacy."Products" products
-    JOIN legacy."Entities" cs
+    "#{source}"."Products" products
+    JOIN "#{source}"."Entities" cs
         ON products."Contact_Entity_Id" = cs."Id"
-    JOIN legacy."Entities" companies
+    JOIN "#{source}"."Entities" companies
         ON cs."Parent_Entity_Id" = companies."Id"
-    JOIN legacy."Owners" owners
+    JOIN "#{source}"."Owners" owners
         ON companies."Login_Name" = owners."Email_Address"
 WHERE
     products."Product_Type_Id" <> 'SYS_PRODUCTTYPE_TEMPLATE'

@@ -1,0 +1,24 @@
+INSERT INTO staging.users
+(
+    legacy_id
+    , legacy_source
+    , email
+    , first_name
+    , last_name
+    , status
+    , parent_entity_id
+    , created_at
+    , updated_at
+)
+SELECT
+    entities."Id"
+    , '#{source}'
+    , entities."Login_Name"
+    , entities."First_Name"
+    , COALESCE(entities."Last_Name", '')
+    , entities."Status"
+    , entities."Parent_Entity_Id"
+    , entities."Enter_DateTime"
+    , entities."Last_Edit_DateTime"
+FROM
+    "#{source}"."Entities" entities
