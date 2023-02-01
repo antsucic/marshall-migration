@@ -22,4 +22,5 @@ FROM
     transform.companies companies
     LEFT JOIN public.locations locations
         ON companies.legacy_location_id = locations.legacy_id
+        AND companies.legacy_source = locations.legacy_source
 ;

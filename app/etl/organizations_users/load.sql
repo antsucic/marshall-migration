@@ -16,8 +16,10 @@ FROM
     staging.organizations_users relations
     JOIN public.users users
         ON relations.legacy_user_id = users.legacy_id
+        AND relations.legacy_source = users.legacy_source
     JOIN public.locations locations
         ON locations.legacy_id = relations.legacy_location_id
+        AND locations.legacy_source = relations.legacy_source
     JOIN public.organizations organizations
-        ON organizations.legacy_ids ~ relations.legacy_organization_id
+        ON organizations.legacy_ids ~ CONCAT(relations.legacy_source, ':', relations.legacy_organization_id)
 ;

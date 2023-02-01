@@ -1,6 +1,7 @@
 INSERT INTO transform.users
 (
     legacy_id
+    , legacy_source
     , email
     , first_name
     , last_name
@@ -11,6 +12,7 @@ INSERT INTO transform.users
 )
 SELECT
     legacy_id
+    , legacy_source
     , CASE legacy_id
         WHEN 'SYS_USER1' THEN 'admin@marshall.com'
         ELSE email

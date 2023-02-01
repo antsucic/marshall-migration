@@ -24,6 +24,8 @@ FROM
     transform.facilities facilities
     LEFT JOIN public.companies companies
         ON facilities.legacy_company_id = companies.legacy_id
+        AND facilities.legacy_source = companies.legacy_source
     LEFT JOIN public.locations locations
         ON facilities.legacy_location_id = locations.legacy_id
+        AND facilities.legacy_source = locations.legacy_source
 ;

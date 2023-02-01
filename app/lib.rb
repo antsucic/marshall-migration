@@ -8,16 +8,6 @@ def connection_parameters
   }
 end
 
-def processes
-  [
-    :setup,
-    :extract,
-    :transform,
-    :load,
-    :cleanup,
-  ]
-end
-
 def load_priority
   [
     :users,
@@ -32,7 +22,28 @@ def load_priority
   ]
 end
 
+def clients
+  %w[
+    PDM-BWSC
+    PDM-CCA
+    PDM-CHS
+    PDM-DEMO
+    PDM-ESA
+    PDM-HRT
+    PDM-LifePoint
+    PDM-LRPLOT
+    PDM-MNPS
+    PDM-Quorum
+  ]
+end
+
 def run_script(connection, path)
   puts "     Running #{path} script!"
   connection.exec(File.open(path).read)
+end
+
+def run_extraction_script(connection, path, source)
+  puts "     Running #{path} script! Source: #{source}"
+  query = File.open(path).read.gsub('"', '\"')
+  connection.exec(eval("\"#{query}\""))
 end

@@ -1,6 +1,7 @@
 INSERT INTO transform.facilities
 (
     legacy_id
+    , legacy_source
     , legacy_company_id
     , legacy_location_id
     , legacy_thumbnail_id
@@ -12,6 +13,7 @@ INSERT INTO transform.facilities
 )
 SELECT
     legacy_id
+    , legacy_source
     , legacy_company_id
     , legacy_location_id
     , legacy_thumbnail_id

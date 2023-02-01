@@ -4,18 +4,15 @@ require 'pg'
 begin
   connection = PG::Connection.new(**connection_parameters)
 
-  processes.each do |process|
-    puts "[[[ Starting #{process} process ]]]"
+  Dir.glob("**/setup.sql") { |path| run_script(connection, path) }
 
-    load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") } if process == :load
-    next if process == :load
-
-    Dir.glob("**/#{process}.sql") do |path|
-      run_script(connection, path)
-    end
-
-    puts "[[[ #{process.capitalize} process finished ]]]"
+  clients.each do |client|
+    Dir.glob("**/extract.sql.txt") { |path| run_extraction_script(connection, path, client) }
   end
+
+  Dir.glob("**/transform.sql") { |path| run_script(connection, path) }
+  #load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") }
+  #Dir.glob("**/cleanup.sql") { |path| run_script(connection, path) }
 
 rescue PG::Error => error
   puts error.message

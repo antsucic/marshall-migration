@@ -9,5 +9,5 @@ SELECT
 FROM
     public.organizations organizations
     JOIN public.locations locations
-        ON organizations.legacy_location_ids ~ locations.legacy_id
+        ON organizations.legacy_location_ids ~ CONCAT(locations.legacy_source, ':', locations.legacy_id)
 ;

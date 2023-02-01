@@ -1,6 +1,7 @@
 INSERT INTO transform.companies
 (
     legacy_id
+    , legacy_source
     , legacy_user_id
     , legacy_location_id
     , "name"
@@ -11,6 +12,7 @@ INSERT INTO transform.companies
 )
 SELECT
     legacy_id
+    , legacy_source
     , legacy_user_id
     , legacy_location_id
     , "name"
