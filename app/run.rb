@@ -11,7 +11,7 @@ begin
   end
 
   Dir.glob("**/transform.sql") { |path| run_script(connection, path) }
-  #load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") }
+  load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") }
   #Dir.glob("**/cleanup.sql") { |path| run_script(connection, path) }
 
 rescue PG::Error => error
