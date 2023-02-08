@@ -1,7 +1,6 @@
 INSERT INTO transform.users
 (
-    legacy_company_id
-    , email
+    email
     , first_name
     , last_name
     , status
@@ -10,17 +9,16 @@ INSERT INTO transform.users
     , updated_at
 )
 SELECT
-    MAX(owners.legacy_company_id)
-    , users.email
+    users.email
     , MAX(users.first_name)
     , MAX(users.last_name)
     , CASE
-        WHEN 2 = ANY(ARRAY_AGG(status::integer)) THEN 'active'
-        WHEN 1 = ANY(ARRAY_AGG(status::integer)) THEN 'pending'
+        WHEN 2 = ANY(ARRAY_AGG(users.status::integer)) THEN 'active'
+        WHEN 1 = ANY(ARRAY_AGG(users.status::integer)) THEN 'pending'
         ELSE 'inactive'
     END
     , CASE
-        WHEN owners.legacy_id IS NOT NULL THEN 'owner'
+        WHEN MAX(owners.legacy_id) IS NOT NULL THEN 'owner'
         WHEN users.email LIKE '%@landrco.com' THEN 'admin_assistant'
         WHEN users.email LIKE '%@lrplot.com' THEN 'admin_assistant'
         WHEN users.email LIKE '%@lraec.com' THEN 'admin_assistant'
@@ -31,10 +29,47 @@ SELECT
 FROM
     staging.users
     LEFT JOIN staging.owners
-        ON users.legacy_id = owners.legacy_id
-        AND users.legacy_source = owners.legacy_source
+        ON users.email = owners.email
+WHERE
+    owners.legacy_id IS NULL
 GROUP BY
     users.email
+;
+
+INSERT INTO transform.owners
+(
+    email
+    , first_name
+    , last_name
+    , status
+    , "role"
+    , created_at
+    , updated_at
+)
+SELECT
+    COALESCE(
+        email,
+        CONCAT(
+            REGEXP_REPLACE(LOWER(first_name), '[^\w]+', ''),
+            '.',
+            REGEXP_REPLACE(LOWER(last_name), '[^\w]+', ''),
+            '@company.com'
+        )
+    ) owner_email
+    , MAX(first_name)
+    , MAX(last_name)
+    , CASE
+        WHEN 2 = ANY(ARRAY_AGG(status::integer)) THEN 'active'
+        WHEN 1 = ANY(ARRAY_AGG(status::integer)) THEN 'pending'
+        ELSE 'inactive'
+    END
+    , 'owner'
+    , NOW()
+    , NOW()
+FROM
+    staging.owners
+GROUP BY
+    owner_email
 ;
 
 INSERT INTO transform.user_aliases
@@ -49,6 +84,32 @@ SELECT
     , legacy_source
 FROM
     staging.users stage
-    LEFT JOIN transform.users transformation
+    JOIN transform.users transformation
         ON stage.email = transformation.email
+;
+
+INSERT INTO transform.owner_aliases
+(
+    owner_id
+    , legacy_id
+    , legacy_source
+    , legacy_company_id
+)
+SELECT
+    transformation.id
+    , legacy_id
+    , legacy_source
+    , legacy_company_id
+FROM
+    staging.owners stage
+    JOIN transform.owners transformation
+        ON stage.email = COALESCE(
+            transformation.email,
+            CONCAT(
+                REGEXP_REPLACE(LOWER(transformation.first_name), '[^\w]+', ''),
+                '.',
+                REGEXP_REPLACE(LOWER(transformation.last_name), '[^\w]+', ''),
+                '@company.com'
+            )
+        )
 ;

@@ -6,7 +6,7 @@ INSERT INTO public.organizations
     , updated_at
 )
 SELECT
-    legacy_id
+    id
     , "name"
     , created_at
     , updated_at

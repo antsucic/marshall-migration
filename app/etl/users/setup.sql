@@ -1,6 +1,9 @@
 DROP TABLE IF EXISTS staging.users;
+DROP TABLE IF EXISTS staging.owners;
 DROP TABLE IF EXISTS transform.users;
 DROP TABLE IF EXISTS transform.user_aliases;
+DROP TABLE IF EXISTS transform.owners;
+DROP TABLE IF EXISTS transform.owner_aliases;
 
 CREATE TABLE staging.users (
     legacy_id VARCHAR
@@ -26,7 +29,6 @@ CREATE TABLE staging.owners (
 
 CREATE TABLE transform.users (
     id SERIAL PRIMARY KEY
-    , legacy_company_id VARCHAR(36)
     , email VARCHAR
     , first_name VARCHAR
     , last_name VARCHAR
@@ -42,8 +44,27 @@ CREATE TABLE transform.user_aliases (
     , legacy_source VARCHAR(100)
 );
 
+CREATE TABLE transform.owners (
+    id SERIAL PRIMARY KEY
+    , email VARCHAR
+    , first_name VARCHAR
+    , last_name VARCHAR
+    , status VARCHAR
+    , "role" VARCHAR
+    , created_at TIMESTAMP
+    , updated_at TIMESTAMP
+);
+
+CREATE TABLE transform.owner_aliases (
+    owner_id BIGINT
+    , legacy_id VARCHAR
+    , legacy_source VARCHAR(100)
+    , legacy_company_id VARCHAR(36)
+);
+
 TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;
 
 ALTER TABLE public.users
     ADD COLUMN IF NOT EXISTS legacy_id BIGINT
+    , ADD COLUMN IF NOT EXISTS legacy_owner_id BIGINT
 ;

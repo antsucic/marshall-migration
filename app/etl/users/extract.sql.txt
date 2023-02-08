@@ -39,8 +39,8 @@ SELECT
     , '#{source}'
     , owners."Company_Id"
     , owners."Email_Address"
-    , owners."First_Name"
-    , COALESCE(owners."Last_Name", '')
+    , COALESCE(owners."First_Name", owners."Display_Name")
+    , COALESCE(owners."Last_Name", 'Doe')
     , owners."Status"
 FROM
     "#{source}"."Owners" owners

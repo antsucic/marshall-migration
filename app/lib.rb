@@ -10,13 +10,13 @@ end
 
 def load_priority
   [
-    #:users,
-    #:organizations,
-    #:locations,
+    :users,
+    :organizations,
+    :locations,
     :companies,
-    #:locations_users,
-    #:locations_organizations,
-    #:companies_users,
+    :locations_users,
+    :locations_organizations,
+    :companies_users,
     #:facilities,
     #:projects,
   ]
