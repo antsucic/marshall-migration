@@ -14,12 +14,17 @@ SELECT
     , locations.id
 FROM
     staging.organizations_users relations
+    JOIN transform.user_aliases user_aliases
+        ON user_aliases.legacy_id = relations.legacy_user_id
+        AND user_aliases.legacy_source = relations.legacy_source
     JOIN public.users users
-        ON relations.legacy_user_id = users.legacy_id
-        AND relations.legacy_source = users.legacy_source
+        ON user_aliases.user_id = users.legacy_id
     JOIN public.locations locations
         ON locations.legacy_id = relations.legacy_location_id
         AND locations.legacy_source = relations.legacy_source
+    JOIN transform.organization_aliases organization_aliases
+        ON organization_aliases.legacy_id = relations.legacy_organization_id
+        AND organization_aliases.legacy_source = relations.legacy_source
     JOIN public.organizations organizations
-        ON organizations.legacy_ids ~ CONCAT(relations.legacy_source, ':', relations.legacy_organization_id)
+        ON organization_aliases.user_id = organizations.legacy_id
 ;

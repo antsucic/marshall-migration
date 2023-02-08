@@ -11,17 +11,21 @@ CREATE TABLE staging.organizations (
 );
 
 CREATE TABLE transform.organizations (
-    legacy_ids VARCHAR
-    , legacy_source VARCHAR(100)
-    , legacy_location_ids VARCHAR
+    id SERIAL PRIMARY KEY
     , "name" VARCHAR
     , created_at TIMESTAMP
     , updated_at TIMESTAMP
 );
 
+CREATE TABLE transform.organization_aliases (
+    organization_id SERIAL PRIMARY KEY
+    , legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
+    , legacy_location_id VARCHAR(36)
+);
+
 TRUNCATE TABLE public.organizations RESTART IDENTITY CASCADE;
 
 ALTER TABLE public.organizations
-    ADD COLUMN IF NOT EXISTS legacy_ids VARCHAR
-    , ADD COLUMN IF NOT EXISTS legacy_location_ids VARCHAR
+    ADD COLUMN IF NOT EXISTS legacy_id BIGINT
 ;

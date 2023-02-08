@@ -7,20 +7,22 @@ INSERT INTO public.companies
     , status
     , created_at
     , updated_at
-    , legacy_user_id
 )
 SELECT
-    companies.legacy_id
-    , locations.id
+    companies.id
+    , MAX(locations.id)
     , companies."name"
     , companies.phone
     , companies.status
     , companies.created_at
     , companies.updated_at
-    , companies.legacy_user_id
 FROM
     transform.companies companies
+    LEFT JOIN transform.company_aliases aliases
+        ON companies.id = aliases.company_id
     LEFT JOIN public.locations locations
-        ON companies.legacy_location_id = locations.legacy_id
-        AND companies.legacy_source = locations.legacy_source
+        ON aliases.legacy_location_id = locations.legacy_id
+        AND aliases.legacy_source = locations.legacy_source
+GROUP BY
+    companies.id
 ;

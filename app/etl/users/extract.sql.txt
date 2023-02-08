@@ -22,3 +22,27 @@ SELECT
     , entities."Last_Edit_DateTime"
 FROM
     "#{source}"."Entities" entities
+;
+
+INSERT INTO staging.owners
+(
+    legacy_id
+    , legacy_source
+    , legacy_company_id
+    , email
+    , first_name
+    , last_name
+    , status
+)
+SELECT
+    owners."Id"
+    , '#{source}'
+    , owners."Company_Id"
+    , owners."Email_Address"
+    , owners."First_Name"
+    , COALESCE(owners."Last_Name", '')
+    , owners."Status"
+FROM
+    "#{source}"."Owners" owners
+;
+

@@ -1,6 +1,7 @@
 INSERT INTO public.locations
 (
     legacy_id
+    , legacy_source
     , address
     , city
     , state
@@ -11,6 +12,7 @@ INSERT INTO public.locations
 )
 SELECT
     legacy_id
+    , legacy_source
     , address
     , city
     , state

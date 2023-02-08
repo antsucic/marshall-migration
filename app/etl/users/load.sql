@@ -1,23 +1,23 @@
 INSERT INTO public.users
 (
-    email
+    legacy_id
+    , email
     , first_name
     , last_name
     , status
     , "role"
     , created_at
     , updated_at
-    , legacy_id
 )
 SELECT
-    email
+    id
+    , email
     , first_name
     , last_name
     , status
     , "role"
     , COALESCE(created_at, NOW())
     , updated_at
-    , legacy_id
 FROM
     transform.users
 ;

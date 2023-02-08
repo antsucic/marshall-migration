@@ -4,13 +4,13 @@ require 'pg'
 begin
   connection = PG::Connection.new(**connection_parameters)
 
-  Dir.glob("**/setup.sql") { |path| run_script(connection, path) }
+  Dir.glob("**/companies/setup.sql") { |path| run_script(connection, path) }
 
   clients.each do |client|
-    Dir.glob("**/extract.sql.txt") { |path| run_extraction_script(connection, path, client) }
+    Dir.glob("**/companies/extract.sql.txt") { |path| run_extraction_script(connection, path, client) }
   end
 
-  Dir.glob("**/transform.sql") { |path| run_script(connection, path) }
+  Dir.glob("**/companies/transform.sql") { |path| run_script(connection, path) }
   load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") }
   #Dir.glob("**/cleanup.sql") { |path| run_script(connection, path) }
 

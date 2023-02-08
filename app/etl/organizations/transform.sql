@@ -1,22 +1,33 @@
 INSERT INTO transform.organizations
 (
-    legacy_ids
-    , legacy_source
-    , legacy_location_ids
-    , "name"
+    "name"
     , created_at
     , updated_at
 )
 SELECT
-    STRING_AGG(CONCAT(organizations.legacy_source, ':', organizations.legacy_id), ', ')
-    , legacy_source
-    , STRING_AGG(CONCAT(organizations.legacy_source, ':', organizations.legacy_location_id), ', ')
-    , organizations."name"
+    organizations."name"
     , MIN(organizations.created_at)
-    , MIN(organizations.updated_at)
+    , MAX(organizations.updated_at)
 FROM
     staging.organizations organizations
 GROUP BY
     organizations."name"
-    , organizations."legacy_source"
+;
+
+INSERT INTO transform.organization_aliases
+(
+    organization_id
+    , legacy_id
+    , legacy_source
+    , legacy_location_id
+)
+SELECT
+    transformation.id
+    , legacy_id
+    , legacy_source
+    , stage.legacy_location_id
+FROM
+    staging.organizations stage
+    LEFT JOIN transform.organizations transformation
+        ON stage.name = transformation.name
 ;

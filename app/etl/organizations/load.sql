@@ -1,14 +1,12 @@
 INSERT INTO public.organizations
 (
-    legacy_ids
-    , legacy_location_ids
+    legacy_id
     , "name"
     , created_at
     , updated_at
 )
 SELECT
-    legacy_ids
-    , legacy_location_ids
+    legacy_id
     , "name"
     , created_at
     , updated_at

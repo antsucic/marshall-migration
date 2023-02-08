@@ -1,12 +1,13 @@
 INSERT INTO staging.locations_users
 (
     legacy_location_id
-    , legacy_source
     , legacy_user_id
+    , legacy_source
 )
 SELECT
     entities."Location_Id"
-    , '#{source}'
     , entities."Id"
+    , '#{source}'
 FROM
     "#{source}"."Entities" entities
+;

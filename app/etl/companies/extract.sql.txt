@@ -2,22 +2,21 @@ INSERT INTO staging.companies
 (
     legacy_id
     , legacy_source
-    , legacy_user_id
-    , legacy_location_id
     , name
     , phone
     , status
 )
 SELECT
-    owners."Company_Id"
+    companies."Id"
     , '#{source}'
-    , entities."Id"
-    , entities."Location_Id"
-    , owners."Display_Name"
-    , owners."Work_Phone"
-    , owners."Status"
+    , MAX(companies."Display_Name")
+    , MAX(owners."Work_Phone")
+    , MAX(companies."Status")
 FROM
-    "#{source}"."Owners" owners
-    LEFT JOIN "#{source}"."Entities" entities
-        ON owners."Email_Address" = entities."Login_Name"
+    "#{source}"."Companies" companies
+    LEFT JOIN "#{source}"."Owners" owners
+        ON owners."Company_Id" = companies."Id"
+        AND owners."Status" = 2
+GROUP BY
+    companies."Id"
 ;
