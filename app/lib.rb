@@ -17,8 +17,8 @@ def load_priority
     :locations_users,
     :locations_organizations,
     :companies_users,
-    #:facilities,
-    #:projects,
+    :facilities,
+    :projects,
   ]
 end
 
@@ -34,6 +34,7 @@ def clients
     PDM-LRPLOT
     PDM-MNPS
     PDM-Quorum
+    PDM-SpectrumEmery
   ]
 end
 
