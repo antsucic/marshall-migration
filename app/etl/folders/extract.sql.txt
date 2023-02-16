@@ -1,0 +1,26 @@
+INSERT INTO staging.folders
+(
+    legacy_id
+    , legacy_folderable_id
+    , legacy_parent_id
+    , legacy_source
+    , "name"
+    , created_at
+)
+SELECT
+    folders."Id"
+    , MAX(roots."Id")
+    , MAX(parents."Parent_Folder_Id")
+    , '#{source}'
+    , MAX(folders."Display_Name")
+    , MAX(folders."Create_Date")
+FROM
+    "#{source}"."Folders" folders
+    LEFT JOIN "#{source}"."Folder_Child_Folders" parents
+        ON folders."Id" = parents."Child_Folder_Id"
+    LEFT JOIN "#{source}"."Products" roots
+        ON parents."Root_Folder_Id" = roots."Folder_Id"
+        OR folders."Id" = roots."Folder_Id"
+GROUP BY
+    folders."Id"
+;

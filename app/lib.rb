@@ -19,6 +19,7 @@ def load_priority
     :companies_users,
     :facilities,
     :projects,
+    :folders,
   ]
 end
 
@@ -39,12 +40,12 @@ def clients
 end
 
 def run_script(connection, path)
-  puts "     Running #{path} script!"
+  puts "     #{Time.now}: Running #{path} script!"
   connection.exec(File.open(path).read)
 end
 
 def run_extraction_script(connection, path, source)
-  puts "     Running #{path} script! Source: #{source}"
+  puts "     #{Time.now}: Running #{path} script! Source: #{source}"
   query = File.open(path).read.gsub('"', '\"')
   connection.exec(eval("\"#{query}\""))
 end
