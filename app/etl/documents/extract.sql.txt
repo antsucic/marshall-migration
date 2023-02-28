@@ -1,0 +1,129 @@
+INSERT INTO staging.documents
+(
+    legacy_id
+    , legacy_folder_id
+    , legacy_documentable_id
+    , legacy_source
+    , "name"
+    , status
+    , description
+    , document_type
+    , is_not_old
+    , file_path
+    , file_name
+    , created_at
+    , updated_at
+)
+SELECT
+    items."Id"
+    , MAX(folders."Folder_Id")
+    , MAX(relations."Product_Id")
+    , '#{source}'
+    , MAX(items."Display_Name")
+    , MAX(items."Status")
+    , MAX(items."Description")
+    , MAX(items."Item_Type_Id")
+    , MAX(items."Is_Current_Version")
+    , MAX(files."Vault_Directory")
+    , MAX(files."Vault_Filename")
+    , MAX(items."Enter_Date")
+    , MAX(items."Last_Edit_DateTime")
+FROM
+    "#{source}"."Items" items
+    LEFT JOIN "#{source}"."Folder_Contents" folders
+        ON items."Id" = folders."Object_Id"
+    LEFT JOIN "#{source}"."Product_Items" relations
+        ON items."Id" = relations."Item_Id"
+    LEFT JOIN "#{source}"."Components" viewables
+        ON items."Default_Viewable_Format_Id" = viewables."Parent_Id"
+    LEFT JOIN "#{source}"."Components" printables
+        ON items."Default_Printable_Format_Id" = printables."Parent_Id"
+    LEFT JOIN "#{source}"."Vault_Entries" files
+        ON COALESCE(viewables."File_Id", printables."File_Id") = files."Id"
+GROUP BY
+    items."Id"
+;
+
+INSERT INTO staging.document_subprojects
+(
+    legacy_id
+    , legacy_source
+    , "name"
+)
+SELECT
+    items."Id"
+    , '#{source}'
+    , MAX(values."Attr_Value")
+FROM
+    "#{source}"."Items" items
+    JOIN "#{source}"."Attribute_Values" values
+        ON items."Id" = values."Object_Id"
+    JOIN "#{source}"."Attributes" attributes
+        ON attributes."Id" = values."Attribute_Id"
+        AND attributes."Display_Name" ILIKE '%subproject%'
+GROUP BY
+    items."Id"
+;
+
+INSERT INTO staging.document_revision_numbers
+(
+    legacy_id
+    , legacy_source
+    , "name"
+)
+SELECT
+    items."Id"
+    , '#{source}'
+    , MAX(values."Attr_Value")
+FROM
+    "#{source}"."Items" items
+    JOIN "#{source}"."Attribute_Values" values
+        ON items."Id" = values."Object_Id"
+    JOIN "#{source}"."Attributes" attributes
+        ON attributes."Id" = values."Attribute_Id"
+        AND attributes."Display_Name" ILIKE '%revision%'
+GROUP BY
+    items."Id"
+;
+
+INSERT INTO staging.document_disciplines
+(
+    legacy_id
+    , legacy_source
+    , "name"
+)
+SELECT
+    items."Id"
+    , '#{source}'
+    , MAX(values."Attr_Value")
+FROM
+    "#{source}"."Items" items
+    JOIN "#{source}"."Attribute_Values" values
+        ON items."Id" = values."Object_Id"
+    JOIN "#{source}"."Attributes" attributes
+        ON attributes."Id" = values."Attribute_Id"
+        AND attributes."Display_Name" ILIKE '%discipline%'
+GROUP BY
+    items."Id"
+;
+
+INSERT INTO staging.document_numbers
+(
+    legacy_id
+    , legacy_source
+    , "name"
+)
+SELECT
+    items."Id"
+    , '#{source}'
+    , MAX(values."Attr_Value")
+FROM
+    "#{source}"."Items" items
+    JOIN "#{source}"."Attribute_Values" values
+        ON items."Id" = values."Object_Id"
+    JOIN "#{source}"."Attributes" attributes
+        ON attributes."Id" = values."Attribute_Id"
+        AND attributes."Display_Name" ILIKE '%item number%'
+GROUP BY
+    items."Id"
+;

@@ -20,6 +20,7 @@ def load_priority
     :facilities,
     :projects,
     :folders,
+    :documents,
   ]
 end
 
