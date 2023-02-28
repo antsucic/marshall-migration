@@ -13,8 +13,6 @@ begin
 
   load_priority.each { |entity| run_script(connection, "app/etl/#{entity}/load.sql") }
 
-  #Dir.glob("**/cleanup.sql") { |path| run_script(connection, path) }
-
 rescue PG::Error => error
   puts error.message
 
