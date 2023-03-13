@@ -49,11 +49,14 @@ INSERT INTO transform.owners
 SELECT
     COALESCE(
         email,
-        CONCAT(
-            REGEXP_REPLACE(LOWER(first_name), '[^\w]+', ''),
-            '.',
-            REGEXP_REPLACE(LOWER(last_name), '[^\w]+', ''),
-            '@company.com'
+        CONCAT('followup_',
+            legacy_id,
+            '@',
+            COALESCE(
+                REGEXP_REPLACE(LOWER(first_name), '[^\w]+', ''),
+                REGEXP_REPLACE(LOWER(last_name), '[^\w]+', ''),
+                'empty.com'
+            )
         )
     ) owner_email
     , MAX(first_name)
