@@ -3,6 +3,7 @@ INSERT INTO staging.facilities
     legacy_id
     , legacy_source
     , legacy_company_id
+    , legacy_location_id
     , legacy_thumbnail_id
     , "name"
     , status
@@ -12,6 +13,7 @@ SELECT
     products."Id"
     , 'PDM-LRPLOT'
     , companies."Id"
+    , products."Id"
     , products."Thumbnail_File_Id"
     , products."Display_Name"
     , products."Status"

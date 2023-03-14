@@ -3,6 +3,7 @@ INSERT INTO staging.facilities
     legacy_id
     , legacy_source
     , legacy_company_id
+    , legacy_location_id
     , "name"
     , status
     , created_at
@@ -10,6 +11,7 @@ INSERT INTO staging.facilities
 SELECT
     'DEFAULT'
     , 'PDM-MNPS'
+    , companies."Id"
     , companies."Id"
     , 'Primary Facility'
     , 2
@@ -25,6 +27,7 @@ INSERT INTO staging.facilities
     legacy_id
     , legacy_source
     , legacy_company_id
+    , legacy_location_id
     , legacy_thumbnail_id
     , "name"
     , status
@@ -34,6 +37,7 @@ SELECT
     products."Id"
     , 'PDM-MNPS'
     , companies."Id"
+    , products."Id"
     , products."Thumbnail_File_Id"
     , products."Display_Name"
     , products."Status"
