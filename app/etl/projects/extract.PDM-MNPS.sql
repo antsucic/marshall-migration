@@ -4,6 +4,7 @@ INSERT INTO staging.projects
     , legacy_facility_id
     , legacy_company_id
     , legacy_source
+    , number
     , "name"
     , description
     , status
@@ -14,6 +15,7 @@ SELECT
     , COALESCE(facilities."Id", 'DEFAULT')
     , companies."Id"
     , 'PDM-MNPS'
+    , av."Attr_Value"
     , products."Display_Name"
     , products."Description"
     , products."Status"
@@ -27,4 +29,7 @@ FROM
     LEFT JOIN "PDM-MNPS"."Products" facilities
         ON facilities."Display_Name" ~* '^_[^_].*'
         AND products."Display_Name" ~* CONCAT(RTRIM(facilities."Display_Name", '_'), '.*')
+    LEFT JOIN "PDM-MNPS"."Attribute_Values" av
+        ON av."Object_Id" = products."Id"
+        AND av."Attribute_Id" = 'SYS_ATTR4'
 ;
