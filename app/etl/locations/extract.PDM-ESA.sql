@@ -14,33 +14,30 @@ INSERT INTO staging.locations
 , updated_at
 )
 SELECT
-    av."Object_Id",
-    'PDM-ESA',
-    max(av_address_1."Attr_Value") addres1,
-    max(av_address_2."Attr_Value") addres2,
-    max(av_city."Attr_Value") city,
-    max(right(av_state."Attr_Value", 2)) region,
-    max(av_postal_code."Attr_Value") postal_code,
-    now(),
-    now()
+    "Object_Id"
+     , 'PDM-ESA'
+     , MAX(
+        CASE WHEN "PDM-ESA"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR357' THEN "Attr_Value" END
+    ) AS address_1
+     , MAX(
+        CASE WHEN "PDM-ESA"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR358' THEN "Attr_Value" END
+    ) AS address_2
+     , MAX(
+        CASE WHEN "PDM-ESA"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR359' THEN "Attr_Value" END
+    ) AS city
+     , MAX(
+        CASE WHEN "PDM-ESA"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR360' THEN "Attr_Value" END
+    ) AS region
+     , MAX(
+        CASE WHEN "PDM-ESA"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR361' THEN "Attr_Value" END
+    ) AS postal_code
+     , NOW()
+     , NOW()
 FROM
-    "PDM-ESA"."Attribute_Values" av
-        INNER JOIN "PDM-ESA"."Attribute_Values" av_address_1
-                   ON av."Object_Id" = av_address_1."Object_Id"
-                       AND av_address_1."Attribute_Id" = 'SYS_ATTR357'
-        INNER JOIN "PDM-ESA"."Attribute_Values" av_address_2
-                   ON av."Object_Id" = av_address_2."Object_Id"
-                       AND av_address_2."Attribute_Id" = 'SYS_ATTR358'
-        INNER JOIN "PDM-ESA"."Attribute_Values" av_city
-                   ON av."Object_Id" = av_city."Object_Id"
-                       AND av_city."Attribute_Id" = 'SYS_ATTR359'
-        INNER JOIN "PDM-ESA"."Attribute_Values" av_state
-                   ON av."Object_Id" = av_state."Object_Id"
-                       AND av_state."Attribute_Id" = 'SYS_ATTR360'
-        INNER JOIN "PDM-ESA"."Attribute_Values" av_postal_code
-                   ON av."Object_Id" = av_postal_code."Object_Id"
-                       AND av_postal_code."Attribute_Id" = 'SYS_ATTR361'
-GROUP BY av."Object_Id";
+    "PDM-ESA"."Attribute_Values"
+GROUP BY
+    "PDM-ESA"."Attribute_Values"."Object_Id"
+;
 
 SET search_path = "PDM-ESA";
 DROP INDEX IF EXISTS object_id_idx;
