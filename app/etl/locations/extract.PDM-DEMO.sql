@@ -1,43 +1,48 @@
-CREATE INDEX IF NOT EXISTS object_id_idx ON "PDM-DEMO"."Attribute_Values" ("Object_Id");
-CREATE INDEX IF NOT EXISTS object_id_attr_id_idx ON "PDM-DEMO"."Attribute_Values" ("Object_Id", "Attribute_Id");
-
 INSERT INTO staging.locations
 (
-    legacy_id
-, legacy_source
-, address_1
-, address_2
-, city
-, region
-, postal_code
-, created_at
-, updated_at
+    legacy_facility_id
+    , legacy_source
+    , address_1
+    , address_2
+    , city
+    , region
+    , postal_code
 )
 SELECT
-    "Object_Id"
-     , 'PDM-DEMO'
-     , MAX(
-        CASE WHEN "PDM-DEMO"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR300' THEN "Attr_Value" END
-    ) AS address_1
-     , MAX(
-        CASE WHEN "PDM-DEMO"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR301' THEN "Attr_Value" END
-    ) AS address_2
-     , MAX(
-        CASE WHEN "PDM-DEMO"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR302' THEN "Attr_Value" END
-    ) AS city
-     , RIGHT(MAX(CASE WHEN "PDM-DEMO"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR303' THEN "Attr_Value" END), 2)
-      AS region
-     , MAX(
-        CASE WHEN "PDM-DEMO"."Attribute_Values"."Attribute_Id" = 'SYS_ATTR305' THEN "Attr_Value" END
-    ) AS postal_code
-     , NOW()
-     , NOW()
+    products."Id"
+    , 'PDM-DEMO'
+    , adresses."Attr_Value"
+    , numbers."Attr_Value"
+    , cities."Attr_Value"
+    , regions."Attr_Value"
+    , codes."Attr_Value"
 FROM
-    "PDM-DEMO"."Attribute_Values"
-GROUP BY
-    "PDM-DEMO"."Attribute_Values"."Object_Id"
+    "PDM-DEMO"."Products" products
+    JOIN "PDM-DEMO"."Owners" owners
+        ON products."Owner_Id" = owners."Id"
+    JOIN "PDM-DEMO"."Companies" companies
+        ON owners."Company_Id" = companies."Id"
+    LEFT JOIN "PDM-DEMO"."Attribute_Values" adresses
+        ON products."Id" = adresses."Object_Id"
+        AND adresses."Attribute_Id" = 'SYS_ATTR300'
+    LEFT JOIN "PDM-DEMO"."Attribute_Values" numbers
+        ON products."Id" = numbers."Object_Id"
+        AND numbers."Attribute_Id" = 'SYS_ATTR301'
+    LEFT JOIN "PDM-DEMO"."Attribute_Values" cities
+        ON products."Id" = cities."Object_Id"
+        AND cities."Attribute_Id" = 'SYS_ATTR302'
+    LEFT JOIN "PDM-DEMO"."Attribute_Values" regions
+        ON products."Id" = regions."Object_Id"
+        AND regions."Attribute_Id" = 'SYS_ATTR303'
+    LEFT JOIN "PDM-DEMO"."Attribute_Values" codes
+        ON products."Id" = codes."Object_Id"
+        AND codes."Attribute_Id" = 'SYS_ATTR305'
+WHERE
+    COALESCE(
+        adresses."Attr_Value"
+        , numbers."Attr_Value"
+        , cities."Attr_Value"
+        , regions."Attr_Value"
+        , codes."Attr_Value"
+    ) IS NOT NULL
 ;
-
-SET search_path = "PDM-DEMO";
-DROP INDEX IF EXISTS object_id_idx;
-DROP INDEX IF EXISTS object_id_attr_id_idx;

@@ -3,7 +3,6 @@ INSERT INTO staging.facilities
     legacy_id
     , legacy_source
     , legacy_company_id
-    , legacy_location_id
     , "name"
     , status
     , created_at
@@ -11,7 +10,6 @@ INSERT INTO staging.facilities
 SELECT
     'DEFAULT'
     , 'PDM-BWSC'
-    , companies."Id"
     , companies."Id"
     , 'Primary Facility'
     , 2

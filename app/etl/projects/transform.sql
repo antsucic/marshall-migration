@@ -5,6 +5,7 @@ INSERT INTO transform.projects
     , legacy_facility_id
     , legacy_company_id
     , "name"
+    , number
     , description
     , status
     , created_at
@@ -16,6 +17,7 @@ SELECT
     , legacy_facility_id
     , legacy_company_id
     , "name"
+    , number
     , description
     , CASE status
         WHEN '2' THEN 'active'

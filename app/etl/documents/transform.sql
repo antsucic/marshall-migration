@@ -21,7 +21,7 @@ SELECT
         WHEN 'SYS_ITEMTYPE_MH_SPEC' THEN 'SPECIFICATION'
         WHEN 'SYS_ITEMTYPE_SPEC' THEN 'SPECIFICATION'
         ELSE 'UPLOADED_FILE'
-    END new_document_type
+     END new_document_type
     , MIN(documents.created_at)
     , MAX(documents.updated_at)
     , subprojects.name
@@ -82,8 +82,8 @@ FROM
     LEFT JOIN staging.document_revision_numbers revisions
         ON stage.legacy_id = revisions.legacy_id
     JOIN transform.documents transformation
-        ON COALESCE(stage.legacy_documentable_id, 'TRUE') = COALESCE(transformation.legacy_documentable_id, 'TRUE')
+        ON stage.legacy_documentable_id = transformation.legacy_documentable_id
         AND stage.legacy_source = transformation.legacy_source
-        AND COALESCE(numbers.name, 'TRUE') = COALESCE(transformation.item_number, 'TRUE')
-        AND COALESCE(subprojects.name, 'TRUE') = COALESCE(transformation.subproject, 'TRUE')
+        AND numbers.name = transformation.item_number
+        AND subprojects.name = transformation.subproject
 ;

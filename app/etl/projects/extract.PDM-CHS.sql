@@ -15,7 +15,7 @@ SELECT
     , COALESCE(facilities."Id", 'DEFAULT')
     , companies."Id"
     , 'PDM-CHS'
-    , av."Attr_Value"
+    , attributes."Attr_Value"
     , products."Display_Name"
     , products."Description"
     , products."Status"
@@ -29,7 +29,7 @@ FROM
     LEFT JOIN "PDM-CHS"."Products" facilities
         ON facilities."Display_Name" ~* '^_[^_].*'
         AND products."Display_Name" ~* CONCAT(RTRIM(facilities."Display_Name", '_'), '.*')
-    LEFT JOIN "PDM-CHS"."Attribute_Values" av
-        ON av."Object_Id" = products."Id"
-        AND av."Attribute_Id" = 'SYS_ATTR4'
+    LEFT JOIN "PDM-CHS"."Attribute_Values" attributes
+        ON attributes."Object_Id" = products."Id"
+        AND attributes."Attribute_Id" = 'SYS_ATTR4'
 ;

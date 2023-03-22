@@ -30,6 +30,6 @@ FROM
     JOIN public.companies companies
         ON aliases.company_id = companies.id
     LEFT JOIN public.locations locations
-        ON facilities.legacy_location_id = locations.legacy_id
+        ON facilities.legacy_id = locations.legacy_facility_id
         AND facilities.legacy_source = locations.legacy_source
 ;

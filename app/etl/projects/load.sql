@@ -4,6 +4,8 @@ INSERT INTO public.projects
     , legacy_source
     , facility_id
     , "name"
+    , number
+    , description
     , status
     , created_at
     , updated_at
@@ -13,6 +15,8 @@ SELECT
     , projects.legacy_source
     , facilities.id
     , projects."name"
+    , projects.number
+    , projects.description
     , projects.status
     , projects.created_at
     , projects.updated_at

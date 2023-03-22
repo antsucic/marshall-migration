@@ -15,7 +15,7 @@ SELECT
     , 'DEFAULT'
     , companies."Id"
     , 'PDM-BWSC'
-    , av."Attr_Value"
+    , attributes."Attr_Value"
     , products."Display_Name"
     , products."Description"
     , products."Status"
@@ -26,7 +26,7 @@ FROM
         ON products."Owner_Id" = owners."Id"
     JOIN "PDM-BWSC"."Companies" companies
         ON owners."Company_Id" = companies."Id"
-    LEFT JOIN "PDM-BWSC"."Attribute_Values" av
-        ON av."Object_Id" = products."Id"
-       AND av."Attribute_Id" = 'SYS_ATTR4'
+    LEFT JOIN "PDM-BWSC"."Attribute_Values" attributes
+        ON attributes."Object_Id" = products."Id"
+       AND attributes."Attribute_Id" = 'SYS_ATTR4'
 ;

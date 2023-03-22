@@ -49,7 +49,8 @@ INSERT INTO transform.owners
 SELECT
     COALESCE(
         email,
-        CONCAT('followup_',
+        CONCAT(
+            'followup_',
             legacy_id,
             '@',
             COALESCE(

@@ -1,6 +1,7 @@
 INSERT INTO transform.locations
 (
     legacy_id
+    , legacy_facility_id
     , legacy_source
     , address
     , city
@@ -12,14 +13,15 @@ INSERT INTO transform.locations
 )
 SELECT
     legacy_id
+    , legacy_facility_id
     , legacy_source
     , TRIM(CASE WHEN address_2 IS NOT NULL THEN address_1 || ', ' || address_2 ELSE address_1 END)
     , city
     , region
     , postal_code
     , 'US'
-    , created_at
-    , updated_at
+    , COALESCE(created_at, NOW())
+    , COALESCE(updated_at, NOW())
 FROM
     staging.locations
 ;

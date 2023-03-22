@@ -3,7 +3,6 @@ INSERT INTO transform.facilities
     legacy_id
     , legacy_source
     , legacy_company_id
-    , legacy_location_id
     , legacy_thumbnail_id
     , "name"
     , facility_type
@@ -15,7 +14,6 @@ SELECT
     legacy_id
     , legacy_source
     , legacy_company_id
-    , legacy_location_id
     , legacy_thumbnail_id
     , LTRIM("name", '_')
     , 'clinic'
