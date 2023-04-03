@@ -1,3 +1,5 @@
+require_relative 'import_tables'
+
 def connection_parameters
   {
     host: ENV['DATABASE_HOST'],
@@ -5,6 +7,16 @@ def connection_parameters
     user: ENV['DATABASE_USERNAME'],
     password: ENV['DATABASE_PASSWORD'],
     port: ENV['DATABASE_PORT'],
+  }
+  end
+
+def legacy_connection_parameters(database:)
+  {
+    host: ENV['LEGACY_DATABASE_HOST'],
+    database: database,
+    username: ENV['LEGACY_DATABASE_USERNAME'],
+    password: ENV['LEGACY_DATABASE_PASSWORD'],
+    port: ENV['LEGACY_DATABASE_PORT'],
   }
 end
 
@@ -37,6 +49,26 @@ def clients
     PDM-MNPS
     PDM-Quorum
     PDM-SpectrumEmery
+  ]
+end
+
+def source_tables
+  %w[
+    Attribute_Values
+    Attributes
+    Companies
+    Components
+    Entities
+    Folder_Child_Folders
+    Folder_Contents
+    Folders
+    Items
+    Locations
+    Organizations
+    Owners
+    Product_Items
+    Products
+    Vault_Entries
   ]
 end
 

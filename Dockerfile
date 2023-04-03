@@ -4,7 +4,16 @@ FROM ruby:3.1.2
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
 RUN apt-get install -y libxml2-dev libxslt1-dev
 RUN apt-get install -y postgresql-client
-RUN apt-get install imagemagick
+RUN apt-get install -y imagemagick
+RUN apt-get install -y curl
+RUN apt-get install -y bash
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+RUN apt-get update
+RUN ACCEPT_EULA=Y apt-get install -y mssql-tools
+RUN ACCEPT_EULA=Y apt-get install -y unixodbc-dev
+RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 
 # Update bunlder
 RUN gem update bundler
@@ -16,21 +25,6 @@ RUN mkdir -p $ROOT_DIR
 
 # Set working directory, where the commands will be ran:
 WORKDIR $ROOT_DIR
-
-# Setting development user
-ARG USER_ID
-ARG GROUP_ID
-
-RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-    groupadd -g ${GROUP_ID} app && \
-    useradd -rm -d /home/app -s /bin/bash -g root -G sudo -u ${USER_ID} app \
-;fi
-
-RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-    chown --recursive ${USER_ID}:${GROUP_ID} ./ /usr/local/ \
-;fi
-
-USER app
 
 # Adding gems
 COPY ./Gemfile Gemfile

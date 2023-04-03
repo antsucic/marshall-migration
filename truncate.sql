@@ -1,5 +1,3 @@
-TRUNCATE TABLE public.schema_migrations CASCADE;
-TRUNCATE TABLE public.ar_internal_metadata CASCADE;
 TRUNCATE TABLE public.users CASCADE;
 TRUNCATE TABLE public.projects CASCADE;
 TRUNCATE TABLE public.locations CASCADE;
