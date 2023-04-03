@@ -52,26 +52,6 @@ def clients
   ]
 end
 
-def source_tables
-  %w[
-    Attribute_Values
-    Attributes
-    Companies
-    Components
-    Entities
-    Folder_Child_Folders
-    Folder_Contents
-    Folders
-    Items
-    Locations
-    Organizations
-    Owners
-    Product_Items
-    Products
-    Vault_Entries
-  ]
-end
-
 def run_script(connection, path)
   puts "     #{Time.now}: Running #{path} script!"
   connection.exec(File.open(path).read)

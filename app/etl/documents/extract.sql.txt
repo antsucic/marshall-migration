@@ -7,7 +7,6 @@ INSERT INTO staging.documents
     , "name"
     , status
     , description
-    , document_type
     , is_not_old
     , file_path
     , file_name
@@ -22,7 +21,6 @@ SELECT
     , MAX(items."Display_Name")
     , MAX(items."Status")
     , MAX(items."Description")
-    , MAX(items."Item_Type_Id")
     , MAX(items."Is_Current_Version")
     , MAX(files."Vault_Directory")
     , MAX(files."Vault_Filename")
@@ -124,6 +122,29 @@ FROM
     JOIN "#{source}"."Attributes" attributes
         ON attributes."Id" = values."Attribute_Id"
         AND attributes."Display_Name" ILIKE '%item number%'
+GROUP BY
+    items."Id"
+;
+
+INSERT INTO staging.document_types
+(
+    legacy_id
+    , legacy_source
+    , "name"
+)
+SELECT
+    items."Id"
+    , '#{source}'
+    , CASE MAX(items."Item_Type_Id")
+        WHEN 'SYS_ITEMTYPE_DRAWING' THEN 'DRAWING'
+        WHEN 'SYS_ITEMTYPE_MH_PLAN' THEN 'DRAWING'
+        WHEN 'SYS_ITEMTYPE_SKETCH' THEN 'DRAWING'
+        WHEN 'SYS_ITEMTYPE_MH_SPEC' THEN 'SPECIFICATION'
+        WHEN 'SYS_ITEMTYPE_SPEC' THEN 'SPECIFICATION'
+        ELSE 'UPLOADED_FILE'
+    END
+FROM
+    "#{source}"."Items" items
 GROUP BY
     items."Id"
 ;
