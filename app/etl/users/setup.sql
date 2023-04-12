@@ -61,10 +61,3 @@ CREATE TABLE transform.owner_aliases (
     , legacy_source VARCHAR(100)
     , legacy_company_id VARCHAR(36)
 );
-
-TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;
-
-ALTER TABLE public.users
-    ADD COLUMN IF NOT EXISTS legacy_id BIGINT
-    , ADD COLUMN IF NOT EXISTS legacy_owner_id BIGINT
-;

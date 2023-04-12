@@ -4,6 +4,9 @@ DROP TABLE IF EXISTS staging.document_revision_numbers;
 DROP TABLE IF EXISTS staging.document_disciplines;
 DROP TABLE IF EXISTS staging.document_numbers;
 DROP TABLE IF EXISTS staging.document_types;
+DROP TABLE IF EXISTS staging.document_issue_names;
+DROP TABLE IF EXISTS staging.document_issue_dates;
+DROP TABLE IF EXISTS staging.document_discipline_map;
 DROP TABLE IF EXISTS transform.documents;
 DROP TABLE IF EXISTS transform.document_revisions;
 
@@ -29,47 +32,429 @@ CREATE INDEX ON staging.documents (legacy_source);
 CREATE TABLE staging.document_subprojects (
     legacy_id VARCHAR(36)
     , legacy_source VARCHAR(100)
-    , "name" VARCHAR
+    , "value" VARCHAR
 );
 
 CREATE INDEX ON staging.document_subprojects (legacy_id);
-CREATE INDEX ON staging.document_subprojects (name);
+CREATE INDEX ON staging.document_subprojects (value);
 
 CREATE TABLE staging.document_revision_numbers (
     legacy_id VARCHAR(36)
     , legacy_source VARCHAR(100)
-    , "name" VARCHAR
+    , "value" VARCHAR
 );
 
 CREATE INDEX ON staging.document_revision_numbers (legacy_id);
-CREATE INDEX ON staging.document_revision_numbers (name);
+CREATE INDEX ON staging.document_revision_numbers (value);
 
 CREATE TABLE staging.document_disciplines (
     legacy_id VARCHAR(36)
     , legacy_source VARCHAR(100)
-    , "name" VARCHAR
+    , "value" VARCHAR
 );
 
 CREATE INDEX ON staging.document_disciplines (legacy_id);
-CREATE INDEX ON staging.document_disciplines (name);
+CREATE INDEX ON staging.document_disciplines (value);
 
 CREATE TABLE staging.document_numbers (
     legacy_id VARCHAR(36)
     , legacy_source VARCHAR(100)
-    , "name" VARCHAR
+    , "value" VARCHAR
 );
 
 CREATE INDEX ON staging.document_numbers (legacy_id);
-CREATE INDEX ON staging.document_numbers (name);
+CREATE INDEX ON staging.document_numbers (value);
 
 CREATE TABLE staging.document_types (
     legacy_id VARCHAR(36)
     , legacy_source VARCHAR(100)
-    , "name" VARCHAR(20)
+    , "value" VARCHAR(20)
 );
 
 CREATE INDEX ON staging.document_types (legacy_id);
-CREATE INDEX ON staging.document_types (name);
+CREATE INDEX ON staging.document_types (value);
+
+CREATE TABLE staging.document_issue_names (
+    legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
+    , "value" VARCHAR
+);
+
+CREATE INDEX ON staging.document_issue_names (legacy_id);
+CREATE INDEX ON staging.document_issue_names (value);
+
+CREATE TABLE staging.document_issue_dates (
+    legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
+    , "value" VARCHAR
+);
+
+CREATE INDEX ON staging.document_issue_dates (legacy_id);
+CREATE INDEX ON staging.document_issue_dates (value);
+
+CREATE TABLE staging.document_discipline_map (
+    legacy_value VARCHAR
+    , new_value VARCHAR
+);
+
+CREATE INDEX ON staging.document_discipline_map (legacy_value);
+CREATE INDEX ON staging.document_discipline_map (new_value);
+
+INSERT INTO staging.document_discipline_map
+    (legacy_value, new_value)
+VALUES
+    ('1987 Signage', 'VENDOR'),
+    ('Accessibility', 'ACCESSIBILITY'),
+    ('Accessibilty', 'ACCESSIBILITY'),
+    ('Acoustics', 'ARCHITECTURAL'),
+    ('ADA', 'ACCESSIBILITY'),
+    ('ADA Drawings', 'ACCESSIBILITY'),
+    ('ADDENDUM NO.', 'ARCHITECTURAL'),
+    ('Addendum No. 01', 'ARCHITECTURAL'),
+    ('Adjusting-Balance Air Testing', 'MECHANICAL'),
+    ('All', 'ARCHITECTURAL'),
+    ('Alternates', 'ARCHITECTURAL'),
+    ('Anchorage', 'VENDOR'),
+    ('Architectural', 'ARCHITECTURAL'),
+    ('ArchitecturalArchitectural', 'ARCHITECTURAL'),
+    ('Architectural Site', 'ARCHITECTURAL'),
+    ('Architectural Tenant', 'ARCHITECTURAL'),
+    ('Asbestos', 'ARCHITECTURAL'),
+    ('Asbestos Abatement', 'ARCHITECTURAL'),
+    ('As-Built', 'ARCHITECTURAL'),
+    ('As-Builts', 'ARCHITECTURAL'),
+    ('ASC Equipment', 'VENDOR'),
+    ('Audio Visual', 'COMMUNICATIONS'),
+    ('A/V', 'COMMUNICATIONS'),
+    ('A/V Systems', 'COMMUNICATIONS'),
+    ('Ball Fields', 'VENDOR'),
+    ('Civil', 'CIVIL'),
+    ('Civil - ED', 'CIVIL'),
+    ('Civil - Hospital', 'CIVIL'),
+    ('Civil - Spinning Wheel', 'CIVIL'),
+    ('Code Consultant', 'VENDOR'),
+    ('Codes', 'VENDOR'),
+    ('Communications', 'COMMUNICATIONS'),
+    ('ConMed', 'VENDOR'),
+    ('Construction Documents', 'ARCHITECTURAL'),
+    ('Construction Phasing', 'ARCHITECTURAL'),
+    ('Controlled Demolition', 'DEMOLITION'),
+    ('Controls', 'COMMUNICATIONS'),
+    ('Core & Shell', 'ARCHITECTURAL'),
+    ('Datacom', 'COMMUNICATIONS'),
+    ('Demolition', 'DEMOLITION'),
+    ('Demolition9/17/2010', 'DEMOLITION'),
+    ('Design Development', 'ARCHITECTURAL'),
+    ('Details', 'ARCHITECTURAL'),
+    ('Detention', 'VENDOR'),
+    ('Detention Security', 'VENDOR'),
+    ('Diagram', 'VENDOR'),
+    ('Dietary', 'FOOD_SERVICE'),
+    ('Door Control', 'COMMUNICATIONS'),
+    ('echanical', 'MECHANICAL'),
+    ('Edge of Slab', 'VENDOR'),
+    ('Egress/Energy', 'VENDOR'),
+    ('Elec Arch', 'ELECTRICAL'),
+    ('Electrical', 'ELECTRICAL'),
+    ('Electrical Demolition', 'ELECTRICAL'),
+    ('Electrical Equipment Anchorage', 'ELECTRICAL'),
+    ('Elevator', 'VENDOR'),
+    ('ENVIRONMENTAL GRAPHICS', 'VENDOR'),
+    ('EP', 'VENDOR'),
+    ('Equipment', 'EQUIPMENT'),
+    ('Equipment Plan', 'EQUIPMENT'),
+    ('Equipment Plans', 'EQUIPMENT'),
+    ('Erection', 'VENDOR'),
+    ('Erosion', 'CIVIL'),
+    ('Erosion Control', 'CIVIL'),
+    ('EROSION CONTROL', 'CIVIL'),
+    ('Existing', 'ARCHITECTURAL'),
+    ('Exterior Framing', 'STRUCTURAL'),
+    ('Fa', 'VENDOR'),
+    ('Finishes', 'INTERIORS'),
+    ('Fire Alarm', 'FIRE_PROTECTION'),
+    ('Fire/Life', 'FIRE_PROTECTION'),
+    ('Fireproofing', 'VENDOR'),
+    ('Fire Protection', 'FIRE_PROTECTION'),
+    ('Fire Safety', 'FIRE_PROTECTION'),
+    ('Fire/Security', 'FIRE_PROTECTION'),
+    ('Fire Sprinkler', 'FIRE_PROTECTION'),
+    ('Fire Suppression', 'FIRE_PROTECTION'),
+    ('Fite Sprinkler', 'FIRE_PROTECTION'),
+    ('Foodservice', 'FOOD_SERVICE'),
+    ('Food Service', 'FOOD_SERVICE'),
+    ('Food Service/Dietary', 'FOOD_SERVICE'),
+    ('Foodservice Equipment', 'FOOD_SERVICE'),
+    ('Food Service Equipment', 'FOOD_SERVICE'),
+    ('Food Services', 'FOOD_SERVICE'),
+    ('Furnishings', 'INTERIORS'),
+    ('Furniture', 'INTERIORS'),
+    ('Furniture & Equipmen', 'INTERIORS'),
+    ('Gas Services', 'PLUMBING'),
+    ('General', 'GENERAL_REQUIREMENTS'),
+    ('General Information', 'GENERAL_REQUIREMENTS'),
+    ('General Requiremee', 'GENERAL_REQUIREMENTS'),
+    ('General Requirements', 'GENERAL_REQUIREMENTS'),
+    ('General RequirementsGeneral RequirementsGeneral Re', 'GENERAL_REQUIREMENTS'),
+    ('Graphics', 'VENDOR'),
+    ('Graphics/Signage', 'VENDOR'),
+    ('Hardscape', 'LANDSCAPE'),
+    ('Healthcare Technolog', 'COMMUNICATIONS'),
+    ('Helipad', 'CIVIL'),
+    ('Heliport', 'CIVIL'),
+    ('HVAC', 'MECHANICAL'),
+    ('ical Gas', 'MEDICAL_GAS'),
+    ('ICRA', 'VENDOR'),
+    ('Imaging', 'VENDOR'),
+    ('Imaging Equipment', 'VENDOR'),
+    ('Infection Control', 'VENDOR'),
+    ('Installation Drawing', 'VENDOR'),
+    ('Instrumentation', 'VENDOR'),
+    ('Interior Design', 'INTERIORS'),
+    ('Interior Designer', 'INTERIORS'),
+    ('Interiors', 'INTERIORS'),
+    ('Internet', 'COMMUNICATIONS'),
+    ('Irrigation', 'LANDSCAPE'),
+    ('IT Vendor', 'COMMUNICATIONS'),
+    ('kitchen', 'FOOD_SERVICE'),
+    ('Kitchen', 'FOOD_SERVICE'),
+    ('Kitchen Equipment', 'FOOD_SERVICE'),
+    ('Lab Equipment', 'VENDOR'),
+    ('Laboratory', 'VENDOR'),
+    ('Laboratory Vendor Drawings', 'VENDOR'),
+    ('Lab Planning', 'VENDOR'),
+    ('Landscape', 'LANDSCAPE'),
+    ('Laundry', 'ARCHITECTURAL'),
+    ('Life Safety', 'LIFE_SAFETY'),
+    ('Lighting', 'ELECTRICAL'),
+    ('Lightning Protection', 'ELECTRICAL'),
+    ('Low Voltage', 'COMMUNICATIONS'),
+    ('Low Voltage/Security', 'COMMUNICATIONS'),
+    ('Low Voltage/Telecom', 'COMMUNICATIONS'),
+    ('Maquet', 'VENDOR'),
+    ('Material Handling', 'VENDOR'),
+    ('M&E', 'MECHANICAL'),
+    ('M-E', 'MECHANICAL'),
+    ('Mechanical', 'MECHANICAL'),
+    ('Mechanical Demolition', 'MECHANICAL'),
+    ('MECHANICAL/ELECTRICA', 'MECHANICAL'),
+    ('Mechanical Equipment Anchorage', 'MECHANICAL'),
+    ('Mechanical & Plumbing', 'MECHANICAL'),
+    ('Mechanical-Plumbing', 'MECHANICAL'),
+    ('Mechanical/Plumbing', 'MECHANICAL'),
+    ('Mech-Elec', 'MECHANICAL'),
+    ('Mech/Elec/Plumb', 'MECHANICAL'),
+    ('MECH, ELECT, PLUMB', 'MECHANICAL'),
+    ('Mech-Plumb', 'MECHANICAL'),
+    ('Mech/Plumb', 'MECHANICAL'),
+    ('Mech/Plumb/Elect', 'MECHANICAL'),
+    ('Med Com', 'COMMUNICATIONS'),
+    ('Medcomm', 'COMMUNICATIONS'),
+    ('Med Comm', 'COMMUNICATIONS'),
+    ('Med Gas', 'MEDICAL_GAS'),
+    ('MedGas', 'MEDICAL_GAS'),
+    ('Medical Communications', 'COMMUNICATIONS'),
+    ('Medical Equipmant', 'VENDOR'),
+    ('Medical Equipment', 'VENDOR'),
+    ('Medical Equipment Anchorage', 'VENDOR'),
+    ('Medical Gas', 'MEDICAL_GAS'),
+    ('Medical Gases', 'MEDICAL_GAS'),
+    ('Mep', 'MECHANICAL'),
+    ('MeP', 'MECHANICAL'),
+    ('MEP', 'MECHANICAL'),
+    ('MEP Utilities', 'MECHANICAL'),
+    ('Metal Bldg Systems', 'VENDOR'),
+    ('Millwork', 'ARCHITECTURAL'),
+    ('Miscellaneous', 'VENDOR'),
+    ('Misc. Vendor', 'VENDOR'),
+    ('M.O.B.', 'ARCHITECTURAL'),
+    ('Modular Casework', 'INTERIORS'),
+    ('M & P', 'MECHANICAL'),
+    ('M&P', 'MECHANICAL'),
+    ('MP', 'MECHANICAL'),
+    ('MP Demolition', 'MECHANICAL'),
+    ('MPE', 'MECHANICAL'),
+    ('Nurse Call', 'COMMUNICATIONS'),
+    ('Orientation', 'ARCHITECTURAL'),
+    ('Other', 'VENDOR'),
+    ('Owner Vendor', 'VENDOR'),
+    ('Parking', 'VENDOR'),
+    ('Parking Equipment', 'VENDOR'),
+    ('Parking Garage', 'VENDOR'),
+    ('Parking Layout', 'VENDOR'),
+    ('Parking Signage Guidelines', 'VENDOR'),
+    ('Parking Signage Guidelines`', 'VENDOR'),
+    ('Patient Rooms', 'ARCHITECTURAL'),
+    ('PCS System', 'VENDOR'),
+    ('P&E', 'PLUMBING'),
+    ('Phasing', 'PHASING'),
+    ('P&ID', 'PLUMBING'),
+    ('Piping Plan', 'PLUMBING'),
+    ('Playing Field', 'VENDOR'),
+    ('Plumbing', 'PLUMBING'),
+    ('Plumbing Demolition', 'PLUMBING'),
+    ('Plumbing & Electrical', 'PLUMBING'),
+    ('Pneumatic Tube', 'PNEUMATIC_TUBE'),
+    ('Pneumatic Tube System', 'PNEUMATIC_TUBE'),
+    ('Pool', 'VENDOR'),
+    ('Pool Design', 'VENDOR'),
+    ('Post Tension', 'STRUCTURAL'),
+    ('Precast', 'STRUCTURAL'),
+    ('Precast Modular Cells', 'STRUCTURAL'),
+    ('Process', 'PLUMBING'),
+    ('Process Piping', 'PLUMBING'),
+    ('PTS System', 'PNEUMATIC_TUBE'),
+    ('Radiology', 'VENDOR'),
+    ('rchitectural', 'ARCHITECTURAL'),
+    ('Reference', 'ARCHITECTURAL'),
+    ('Repairs', 'VENDOR'),
+    ('re Protection', 'FIRE_PROTECTION'),
+    ('Reroof', 'VENDOR'),
+    ('Retaining Wall', 'LANDSCAPE'),
+    ('rientation', 'ARCHITECTURAL'),
+    ('Roof', 'ARCHITECTURAL'),
+    ('Rooftop Landscape', 'LANDSCAPE'),
+    ('San-I-Pak', 'VENDOR'),
+    ('Security', 'COMMUNICATIONS'),
+    ('Security and Fire Alarm', 'COMMUNICATIONS'),
+    ('Security Camera', 'COMMUNICATIONS'),
+    ('Security Electronics', 'COMMUNICATIONS'),
+    ('Security Electronics & Fire Alarm', 'COMMUNICATIONS'),
+    ('Security & Fire Alar', 'COMMUNICATIONS'),
+    ('Security & Fire Alarm', 'COMMUNICATIONS'),
+    ('Security Wall', 'VENDOR'),
+    ('SE&FA', 'COMMUNICATIONS'),
+    ('Seismic', 'STRUCTURAL'),
+    ('Sequence A - Accessibility', 'ACCESSIBILITY'),
+    ('Sequence A - Architectural', 'ARCHITECTURAL'),
+    ('Sequence A-B-C - Signage', 'VENDOR'),
+    ('Sequence A - Civil', 'CIVIL'),
+    ('Sequence A - Electrical', 'ELECTRICAL'),
+    ('Sequence A - Fire Protection', 'FIRE_PROTECTION'),
+    ('Sequence A - General Requirements', 'GENERAL_REQUIREMENTS'),
+    ('Sequence A - Interiors', 'INTERIORS'),
+    ('Sequence A - Landscape', 'LANDSCAPE'),
+    ('Sequence A - Life Safety', 'LIFE_SAFETY'),
+    ('Sequence A - Mechanical', 'MECHANICAL'),
+    ('Sequence A - Plumbing', 'PLUMBING'),
+    ('Sequence A - Signage', 'VENDOR'),
+    ('Sequence A - Structural', 'STRUCTURAL'),
+    ('Sequence A - Technology', 'COMMUNICATIONS'),
+    ('Sequence B - Accessibility', 'ACCESSIBILITY'),
+    ('Sequence B - Architectural', 'ARCHITECTURAL'),
+    ('Sequence B - Electrical', 'ELECTRICAL'),
+    ('Sequence B - Fire Protection', 'FIRE_PROTECTION'),
+    ('Sequence B - General Requirements', 'GENERAL_REQUIREMENTS'),
+    ('Sequence B - Interiors', 'INTERIORS'),
+    ('Sequence B - Life Safety', 'LIFE_SAFETY'),
+    ('Sequence B - Mechanical', 'MECHANICAL'),
+    ('Sequence B - Plumbing', 'PLUMBING'),
+    ('Sequence B - Technology', 'COMMUNICATIONS'),
+    ('Sewer', 'PLUMBING'),
+    ('Sewer Works', 'PLUMBING'),
+    ('Shop', 'VENDOR'),
+    ('Shop Drawing', 'VENDOR'),
+    ('Shop Drawings', 'VENDOR'),
+    ('Shops', 'VENDOR'),
+    ('Signage', 'VENDOR'),
+    ('Site', 'CIVIL'),
+    ('Site Development', 'CIVIL'),
+    ('Site Improvements', 'CIVIL'),
+    ('Site Improvements - Prayer Garden', 'CIVIL'),
+    ('Site Signage', 'VENDOR'),
+    ('Site Survey', 'CIVIL'),
+    ('Site Work', 'CIVIL'),
+    ('Sketch', 'VENDOR'),
+    ('Slab Edge', 'VENDOR'),
+    ('Sound Masking', 'VENDOR'),
+    ('Spalsh pad', 'VENDOR'),
+    ('Special Systems', 'VENDOR'),
+    ('Specifications', 'SPECIFICATIONS'),
+    ('Specs', 'SPECIFICATIONS'),
+    ('Sports Layouts', 'VENDOR'),
+    ('Sprinkler', 'FIRE_PROTECTION'),
+    ('Sprinklers', 'FIRE_PROTECTION'),
+    ('SprinklerSystem', 'FIRE_PROTECTION'),
+    ('Stadium', 'VENDOR'),
+    ('Stairs', 'VENDOR'),
+    ('Statement of Conditions', 'VENDOR'),
+    ('Stealth Technologies', 'VENDOR'),
+    ('Steel', 'VENDOR'),
+    ('Steel Shops', 'VENDOR'),
+    ('Storage', 'VENDOR'),
+    ('Storage Systems', 'VENDOR'),
+    ('Stress Wire', 'VENDOR'),
+    ('Structural', 'STRUCTURAL'),
+    ('StructuralStructural', 'STRUCTURAL'),
+    ('Submittal', 'VENDOR'),
+    ('Support', 'VENDOR'),
+    ('SUPPORT PLAN', 'VENDOR'),
+    ('Surveillance', 'COMMUNICATIONS'),
+    ('Survey', 'CIVIL'),
+    ('T-24', 'VENDOR'),
+    ('Technology', 'COMMUNICATIONS'),
+    ('Telecom', 'COMMUNICATIONS'),
+    ('Telecommunication', 'COMMUNICATIONS'),
+    ('Telecommunications', 'COMMUNICATIONS'),
+    ('Theater', 'VENDOR'),
+    ('Theater Planning', 'VENDOR'),
+    ('Theatre Planning', 'VENDOR'),
+    ('Title', 'GENERAL_REQUIREMENTS'),
+    ('Traffic Signal', 'CIVIL'),
+    ('Transportation', 'CIVIL'),
+    ('umbing', 'PLUMBING'),
+    ('UP & ID', 'PLUMBING'),
+    ('UP&ID', 'PLUMBING'),
+    ('urity & Fire Alarm', 'COMMUNICATIONS'),
+    ('Utilities', 'CIVIL'),
+    ('UTILITIES', 'CIVIL'),
+    ('Utility', 'CIVIL'),
+    ('Utility Plan', 'CIVIL'),
+    ('Various', 'VENDOR'),
+    ('Vendor', 'VENDOR'),
+    ('Vendor | Electrical', 'VENDOR'),
+    ('Vendor | Mechanical', 'VENDOR'),
+    ('Vendor | Plumbing', 'VENDOR'),
+    ('Vendor | Structural', 'VENDOR'),
+    ('Vertical Transport', 'VENDOR'),
+    ('Volume 10 - Sequence', 'ARCHITECTURAL'),
+    ('Volume 10 - Sequence C', 'ARCHITECTURAL'),
+    ('Volume 1 - G, LS, C, L, S', 'ARCHITECTURAL'),
+    ('Volume 1 - Sequence', 'ARCHITECTURAL'),
+    ('Volume 1 - Sequence A', 'ARCHITECTURAL'),
+    ('Volume 2 - Architectural', 'ARCHITECTURAL'),
+    ('Volume 2 - Sequence A', 'ARCHITECTURAL'),
+    ('Volume 3 - Interiors', 'INTERIORS'),
+    ('Volume 3 - Sequence B', 'ARCHITECTURAL'),
+    ('Volume 4 - Mechanical', 'MECHANICAL'),
+    ('Volume 4 - Sequence B', 'ARCHITECTURAL'),
+    ('Volume 5 - Plumbing', 'PLUMBING'),
+    ('Volume 5 - Sequence', 'ARCHITECTURAL'),
+    ('Volume 5 - Sequence C', 'ARCHITECTURAL'),
+    ('Volume 6 - Electrical', 'ELECTRICAL'),
+    ('Volume 6 - Sequence', 'ARCHITECTURAL'),
+    ('Volume 6 - Sequence C', 'ARCHITECTURAL'),
+    ('Volume 7 - Sequence', 'ARCHITECTURAL'),
+    ('Volume 7 - Sequence C', 'ARCHITECTURAL'),
+    ('Volume 7 - Telecommunications', 'COMMUNICATIONS'),
+    ('Volume 8 - Sequence C', 'ARCHITECTURAL'),
+    ('Volume 9 - Sequence', 'ARCHITECTURAL'),
+    ('Volume 9 - Sequence C', 'ARCHITECTURAL'),
+    ('Wall Protection', 'ARCHITECTURAL'),
+    ('Waste', 'PLUMBING'),
+    ('Waste Water', 'PLUMBING'),
+    ('Water', 'PLUMBING'),
+    ('Water and Sewer', 'PLUMBING'),
+    ('Water facility', 'PLUMBING'),
+    ('Water Feature', 'PLUMBING'),
+    ('Water Flow', 'PLUMBING'),
+    ('Water Line', 'PLUMBING'),
+    ('WaterLine', 'PLUMBING'),
+    ('Water Plant', 'PLUMBING'),
+    ('Water Production Bldg', 'PLUMBING'),
+    ('Water Services', 'PLUMBING'),
+    ('WWTP', 'PLUMBING')
+;
 
 CREATE TABLE transform.documents (
     id SERIAL PRIMARY KEY
@@ -100,23 +485,10 @@ CREATE TABLE transform.document_revisions (
     , "name" VARCHAR
     , status VARCHAR
     , description VARCHAR
+    , document_attributes JSONB
     , created_at TIMESTAMP
     , updated_at TIMESTAMP
     , revision VARCHAR
     , discipline VARCHAR
     , is_old BOOLEAN
 );
-
-TRUNCATE TABLE public.documents RESTART IDENTITY CASCADE;
-TRUNCATE TABLE public.document_revisions RESTART IDENTITY CASCADE;
-
-ALTER TABLE public.documents
-    ADD COLUMN IF NOT EXISTS legacy_id BIGINT
-;
-
-ALTER TABLE public.document_revisions
-    ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(36)
-    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
-    , ADD COLUMN IF NOT EXISTS legacy_path VARCHAR
-    , ADD COLUMN IF NOT EXISTS legacy_filename VARCHAR
-;

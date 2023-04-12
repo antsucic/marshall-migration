@@ -1,5 +1,3 @@
-TRUNCATE TABLE public.organizations_users RESTART IDENTITY CASCADE;
-
 DROP TABLE IF EXISTS staging.organizations_users;
 
 CREATE TABLE staging.organizations_users (

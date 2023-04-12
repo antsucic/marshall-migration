@@ -23,10 +23,3 @@ CREATE TABLE transform.facilities (
     , created_at TIMESTAMP
     , updated_at TIMESTAMP
 );
-
-TRUNCATE TABLE public.facilities RESTART IDENTITY CASCADE;
-
-ALTER TABLE public.facilities
-    ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(36)
-    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
-;

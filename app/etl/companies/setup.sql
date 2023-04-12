@@ -24,9 +24,3 @@ CREATE TABLE transform.company_aliases (
     , legacy_id VARCHAR(36)
     , legacy_source VARCHAR(100)
 );
-
-TRUNCATE TABLE public.companies RESTART IDENTITY CASCADE;
-
-ALTER TABLE public.companies
-    ADD COLUMN IF NOT EXISTS legacy_id BIGINT
-;

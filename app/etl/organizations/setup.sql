@@ -24,9 +24,3 @@ CREATE TABLE transform.organization_aliases (
     , legacy_source VARCHAR(100)
     , legacy_location_id VARCHAR(36)
 );
-
-TRUNCATE TABLE public.organizations RESTART IDENTITY CASCADE;
-
-ALTER TABLE public.organizations
-    ADD COLUMN IF NOT EXISTS legacy_id BIGINT
-;

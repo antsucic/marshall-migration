@@ -13,12 +13,12 @@ INSERT INTO transform.documents
 SELECT
     documents.legacy_documentable_id
     , documents.legacy_source
-    , numbers.name
+    , numbers.value
     , CASE WHEN 2 = ANY(ARRAY_AGG(documents.status::integer)) THEN 'active' ELSE 'inactive' END
-    , types.name
+    , types.value
     , MIN(documents.created_at)
     , MAX(documents.updated_at)
-    , subprojects.name
+    , subprojects.value
     , ARRAY_AGG(documents.legacy_id)
 FROM
     staging.documents
@@ -31,9 +31,9 @@ FROM
 GROUP BY
     documents.legacy_documentable_id
     , documents.legacy_source
-    , types.name
-    , numbers.name
-    , subprojects.name
+    , types.value
+    , numbers.value
+    , subprojects.value
 ;
 
 INSERT INTO transform.document_revisions
@@ -47,6 +47,7 @@ INSERT INTO transform.document_revisions
     , "name"
     , status
     , description
+    , document_attributes
     , created_at
     , updated_at
     , revision
@@ -63,21 +64,26 @@ SELECT
     , stage.name
     , CASE WHEN stage.status::integer = 2 THEN 'active' ELSE 'inactive' END
     , stage.description
+    , JSONB '{}'
+        || CASE WHEN issue_dates.value IS NULL THEN JSONB '{}' ELSE JSONB_BUILD_OBJECT('issue_date', issue_dates.value) END
+        || CASE WHEN issue_names.value IS NULL THEN JSONB '{}' ELSE JSONB_BUILD_OBJECT('issue_name', issue_names.value) END
     , stage.created_at
     , stage.updated_at
-    , revisions.name
-    , disciplines.name
+    , revisions.value
+    , disciplines.new_value
     , NOT stage.is_not_old::boolean
 FROM
     staging.documents stage
-    LEFT JOIN staging.document_numbers numbers
-        ON stage.legacy_id = numbers.legacy_id
-    LEFT JOIN staging.document_subprojects subprojects
-        ON stage.legacy_id = subprojects.legacy_id
-    LEFT JOIN staging.document_disciplines disciplines
-        ON stage.legacy_id = disciplines.legacy_id
+    LEFT JOIN staging.document_disciplines legacy_disciplines
+        ON stage.legacy_id = legacy_disciplines.legacy_id
+    LEFT JOIN staging.document_discipline_map disciplines
+        ON legacy_disciplines.value = disciplines.legacy_value
     LEFT JOIN staging.document_revision_numbers revisions
         ON stage.legacy_id = revisions.legacy_id
+    LEFT JOIN staging.document_issue_names issue_names
+        ON stage.legacy_id = issue_names.legacy_id
+    LEFT JOIN staging.document_issue_dates issue_dates
+        ON stage.legacy_id = issue_dates.legacy_id
     JOIN transform.documents transformation
         ON stage.legacy_id = ANY(transformation.legacy_revisions)
         AND stage.legacy_source = transformation.legacy_source

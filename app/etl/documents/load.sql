@@ -36,6 +36,7 @@ INSERT INTO public.document_revisions
     , "name"
     , status
     , description
+    , document_attributes
     , created_at
     , updated_at
     , revision
@@ -52,6 +53,7 @@ SELECT
      , revisions."name"
      , revisions.status
      , revisions.description
+     , revisions.document_attributes
      , revisions.created_at
      , revisions.updated_at
      , revisions.revision

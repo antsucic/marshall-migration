@@ -154,6 +154,7 @@ def products_columns
     Owner_Id: 'Owner_Id',
     Enter_Date: 'Enter_Date',
     Thumbnail_File_Id: 'Thumbnail_File_Id',
+    Folder_Id: 'Folder_Id',
   }
 end
 

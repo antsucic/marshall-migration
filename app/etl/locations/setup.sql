@@ -26,11 +26,3 @@ CREATE TABLE transform.locations (
     , created_at TIMESTAMP
     , updated_at TIMESTAMP
 );
-
-TRUNCATE TABLE public.locations RESTART IDENTITY CASCADE;
-
-ALTER TABLE public.locations
-    ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(36)
-    , ADD COLUMN IF NOT EXISTS legacy_facility_id VARCHAR(36)
-    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
-;

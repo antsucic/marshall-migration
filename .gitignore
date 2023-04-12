@@ -1,3 +1,15 @@
 .env
 .env.docker
 dump
+
+# Ignore live import scripts
+import.production.sh
+import.staging.sh
+import.etl.sh
+import.uat.sh
+
+# Ignore live cleanup scripts
+cleanup.production.sh
+cleanup.staging.sh
+cleanup.etl.sh
+cleanup.uat.sh
