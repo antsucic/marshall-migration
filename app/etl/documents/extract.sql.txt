@@ -8,6 +8,7 @@ INSERT INTO staging.documents
     , status
     , description
     , is_not_old
+    , file_source
     , file_path
     , file_name
     , created_at
@@ -22,6 +23,7 @@ SELECT
     , MAX(items."Status")
     , MAX(items."Description")
     , MAX(items."Is_Current_Version")
+    , MIN(sources."priority")
     , MAX(files."Vault_Directory")
     , MAX(files."Vault_Filename")
     , MAX(items."Enter_Date")
@@ -38,6 +40,8 @@ FROM
         ON items."Default_Printable_Format_Id" = printables."Parent_Id"
     LEFT JOIN "#{source}"."Vault_Entries" files
         ON COALESCE(viewables."File_Id", printables."File_Id") = files."Id"
+    LEFT JOIN staging.document_file_sources sources
+        ON files."Vault_Storage_Device_Id" = sources."name"
 GROUP BY
     items."Id"
 ;

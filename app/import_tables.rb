@@ -163,6 +163,7 @@ def vault_entries_columns
     Id: 'Id',
     Vault_Directory: 'Vault_Directory',
     Vault_Filename: 'Vault_Filename',
+    Vault_Storage_Device_Id: 'Vault_Storage_Device_Id',
   }
 end
 

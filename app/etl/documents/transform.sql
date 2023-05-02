@@ -59,7 +59,10 @@ SELECT
     , stage.legacy_id
     , stage.legacy_folder_id
     , stage.legacy_source
-    , RTRIM(RTRIM(RTRIM(stage.file_path, stage.file_name), '\'), '/')
+    , CONCAT(
+        CASE WHEN stage.file_source = 2 THEN 'LL_WS2012_LOCAL/' ELSE '' END,
+        RTRIM(RTRIM(RTRIM(stage.file_path, stage.file_name), '\'), '/')
+    )
     , stage.file_name
     , stage.name
     , CASE WHEN stage.status::integer = 2 THEN 'active' ELSE 'inactive' END

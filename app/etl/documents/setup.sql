@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS staging.documents;
+DROP TABLE IF EXISTS staging.document_file_sources;
 DROP TABLE IF EXISTS staging.document_subprojects;
 DROP TABLE IF EXISTS staging.document_revision_numbers;
 DROP TABLE IF EXISTS staging.document_disciplines;
@@ -19,6 +20,7 @@ CREATE TABLE staging.documents (
     , status VARCHAR
     , description VARCHAR
     , is_not_old VARCHAR
+    , file_source INT
     , file_path VARCHAR
     , file_name VARCHAR
     , created_at TIMESTAMP(6) NOT NULL
@@ -28,6 +30,20 @@ CREATE TABLE staging.documents (
 CREATE INDEX ON staging.documents (legacy_id);
 CREATE INDEX ON staging.documents (legacy_documentable_id);
 CREATE INDEX ON staging.documents (legacy_source);
+
+CREATE TABLE staging.document_file_sources (
+    priority INT
+    , name VARCHAR
+);
+
+INSERT INTO staging.document_file_sources
+    (priority, name)
+VALUES
+    (1, 'SYS_DEFAULT_S3_DEVICE'),
+    (2, 'SYS_DEFAULT_STORAGE_DEVICE'),
+    (3, 'SYS_DEFAULT_ARCHIVE'),
+    (4, 'SYS_DEFAULT_MOBILE_DEVICE')
+;
 
 CREATE TABLE staging.document_subprojects (
     legacy_id VARCHAR(36)
@@ -287,7 +303,7 @@ VALUES
     ('Patient Rooms', 'ARCHITECTURAL'),
     ('PCS System', 'VENDOR'),
     ('P&E', 'PLUMBING'),
-    ('Phasing', 'PHASING'),
+    ('Phasing', 'ARCHITECTURAL'), -- PHASING
     ('P&ID', 'PLUMBING'),
     ('Piping Plan', 'PLUMBING'),
     ('Playing Field', 'VENDOR'),
@@ -369,8 +385,8 @@ VALUES
     ('Sound Masking', 'VENDOR'),
     ('Spalsh pad', 'VENDOR'),
     ('Special Systems', 'VENDOR'),
-    ('Specifications', 'SPECIFICATIONS'),
-    ('Specs', 'SPECIFICATIONS'),
+    ('Specifications', 'ARCHITECTURAL'), -- SPECIFICATIONS
+    ('Specs', 'ARCHITECTURAL'), -- SPECIFICATIONS
     ('Sports Layouts', 'VENDOR'),
     ('Sprinkler', 'FIRE_PROTECTION'),
     ('Sprinklers', 'FIRE_PROTECTION'),
