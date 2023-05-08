@@ -10,16 +10,6 @@ def connection_parameters
   }
   end
 
-def legacy_connection_parameters(database:)
-  {
-    host: ENV['LEGACY_DATABASE_HOST'],
-    database: database,
-    username: ENV['LEGACY_DATABASE_USERNAME'],
-    password: ENV['LEGACY_DATABASE_PASSWORD'],
-    port: ENV['LEGACY_DATABASE_PORT'],
-  }
-end
-
 def load_priority
   [
     :users,

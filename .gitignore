@@ -1,5 +1,7 @@
 .env
 .env.docker
+.env.production
+
 dump
 
 # Ignore live import scripts
