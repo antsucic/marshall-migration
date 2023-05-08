@@ -1,3 +1,6 @@
+puts "PREPARING SCHEMAS"
+require "./app/prepare.rb"
+
 puts "RELOADING DATA FROM LEGACY"
 require "./app/reload.rb"
 
