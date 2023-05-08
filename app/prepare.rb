@@ -6,6 +6,14 @@ begin
 
   clients.each do |client|
     connection.exec("CREATE SCHEMA IF NOT EXISTS \"#{client}\"")
+
+    import_tables.each do |table, columns|
+      connection.exec <<-SQL
+        CREATE TABLE IF NOT EXISTS "#{client}"."#{table}" (
+          "#{columns.keys.join('" VARCHAR, "')}" VARCHAR
+        )
+      SQL
+    end
   end
 
 rescue PG::Error => error
