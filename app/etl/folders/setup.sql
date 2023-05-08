@@ -62,10 +62,3 @@ CREATE TABLE transform.folders_production_updated (
     , folderable_type VARCHAR
     , folderable_id BIGINT
 );
-
-CREATE INDEX IF NOT EXISTS index_facilities_legacy_id ON public.facilities (legacy_id);
-CREATE INDEX IF NOT EXISTS index_facilities_legacy_source ON public.facilities (legacy_source);
-CREATE INDEX IF NOT EXISTS index_projects_legacy_id ON public.projects (legacy_id);
-CREATE INDEX IF NOT EXISTS index_projects_legacy_source ON public.projects (legacy_source);
-CREATE INDEX IF NOT EXISTS index_folders_legacy_id ON public.folders (legacy_id);
-CREATE INDEX IF NOT EXISTS index_folders_legacy_source ON public.folders (legacy_source);

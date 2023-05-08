@@ -480,7 +480,7 @@ VALUES
 
 CREATE TABLE transform.documents_legacy (
     id SERIAL PRIMARY KEY
-    , legacy_ids VARCHAR[]
+    , legacy_ids TEXT[]
     , legacy_documentable_id VARCHAR(36)
     , legacy_source VARCHAR(100)
     , item_number VARCHAR
@@ -491,6 +491,7 @@ CREATE TABLE transform.documents_legacy (
     , subproject VARCHAR
 );
 
+CREATE INDEX ON transform.documents_legacy USING GIN (legacy_ids);
 CREATE INDEX ON transform.documents_legacy (legacy_documentable_id);
 CREATE INDEX ON transform.documents_legacy (legacy_source);
 CREATE INDEX ON transform.documents_legacy (item_number);
@@ -525,7 +526,11 @@ CREATE TABLE transform.documents_production AS
         , documents.documentable_type
         , documents.documentable_id
         , documents.subproject
-        , COALESCE(documents.legacy_ids, ARRAY_AGG(revisions.legacy_id)::TEXT[]) AS legacy_ids
+        , CASE
+            WHEN documents.legacy_ids = '{}'
+            THEN ARRAY_AGG(revisions.legacy_id)::TEXT[]
+            ELSE documents.legacy_ids
+        END AS legacy_ids
         , COALESCE(documents.legacy_source, MAX(revisions.legacy_source)) AS legacy_source
     FROM
         public.documents
@@ -534,6 +539,8 @@ CREATE TABLE transform.documents_production AS
     GROUP BY
         documents.id
 ;
+
+CREATE INDEX ON transform.documents_production USING GIN (legacy_ids);
 
 CREATE TABLE transform.documents_production_added AS
     SELECT

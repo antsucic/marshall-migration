@@ -47,12 +47,10 @@ FROM
 UPDATE
     public.document_revisions
 SET
-    document_id = updates.document_id
-    , "name" = updates.name
+    "name" = updates.name
     , status = updates.status
     , description = updates.description
     , document_attributes = updates.document_attributes
-    , created_at = updates.created_at
     , updated_at = updates.updated_at
     , revision = updates.revision
     , discipline = updates.discipline
@@ -104,6 +102,6 @@ SELECT
 FROM
     transform.document_revisions_production_added revisions
     JOIN public.documents
-        ON revisions.legacy_id <@ documents.legacy_ids
+        ON revisions.legacy_id = ANY(documents.legacy_ids)
         AND revisions.legacy_source = documents.legacy_source
 ;

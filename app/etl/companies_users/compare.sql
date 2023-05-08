@@ -18,5 +18,5 @@ FROM
         AND companies.id = companies_users.company_id
 WHERE
     legacy.company_id IS NOT NULL
-    AND companies_users.id IS NULL
+    AND companies_users.company_id IS NULL
 ;

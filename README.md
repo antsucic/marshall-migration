@@ -9,6 +9,9 @@ Requires pg_dump & psql locally
 ### Run ETL scripts
 ```docker compose exec app ruby app/run.rb```
 
+### Run full sync
+```docker compose exec app ruby app/sync.rb```
+
 ### Import data to local app database
 Requires pg_dump & psql locally
 

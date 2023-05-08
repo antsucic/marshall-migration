@@ -7,7 +7,6 @@ SET
     , status = updates.status
     , updated_at = updates.updated_at
     , facility_id = updates.facility_id
-    , legacy_facility_id = updates.legacy_facility_id
 FROM
     transform.projects_production_updated updates
 WHERE
@@ -24,7 +23,6 @@ INSERT INTO public.projects
     , updated_at
     , facility_id
     , legacy_id
-    , legacy_facility_id
     , legacy_source
 )
 SELECT
@@ -36,7 +34,6 @@ SELECT
     , updated_at
     , facility_id
     , legacy_id
-    , legacy_facility_id
     , legacy_source
 FROM
     transform.projects_production_added

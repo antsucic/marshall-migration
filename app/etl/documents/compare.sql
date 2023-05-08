@@ -17,8 +17,8 @@ SELECT
     , legacy.document_type
     , legacy.created_at
     , legacy.updated_at
-    , CASE WHEN projects.id IS NOT NULL THEN 'Project' ELSE 'Facility' END
-    , COALESCE(projects.id, facilities.id)
+    , CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END
+    , COALESCE(facilities.id, projects.id)
     , legacy.subproject
     , legacy.legacy_ids
     , legacy.legacy_source
@@ -56,8 +56,8 @@ SELECT
     , legacy.status
     , legacy.document_type
     , legacy.updated_at
-    , CASE WHEN projects.id IS NOT NULL THEN 'Project' ELSE 'Facility' END
-    , COALESCE(projects.id, facilities.id)
+    , CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END
+    , COALESCE(facilities.id, projects.id)
     , legacy.subproject
     , legacy.legacy_ids
     , legacy.legacy_source
@@ -70,16 +70,16 @@ FROM
         ON legacy.legacy_documentable_id = projects.legacy_id
         AND legacy.legacy_source = projects.legacy_source
     JOIN transform.documents_production production
-        ON legacy.legacy_ids && production.legacy_ids
+        ON legacy.legacy_ids = production.legacy_ids
         AND legacy.legacy_source = production.legacy_source
 WHERE
     COALESCE(legacy.item_number, '') <> COALESCE(production.item_number, '')
     OR COALESCE(legacy.status, '') <> COALESCE(production.status, '')
     OR COALESCE(legacy.document_type, '') <> COALESCE(production.document_type, '')
-    OR COALESCE(CASE WHEN projects.id IS NOT NULL THEN 'Project' ELSE 'Facility' END, '') <> COALESCE(production.documentable_type, '')
-    OR COALESCE(projects.id, facilities.id, 0) <> COALESCE(production.documentable_id, 0)
+    OR COALESCE(CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END, '') <> COALESCE(production.documentable_type, '')
+    OR COALESCE(facilities.id, projects.id, 0) <> COALESCE(production.documentable_id, 0)
     OR COALESCE(legacy.subproject, '') <> COALESCE(production.subproject, '')
-    OR COALESCE(legacy.legacy_ids::VARCHAR, '') <> COALESCE(production.legacy_ids::VARCHAR, '')
+    OR legacy.legacy_ids <> production.legacy_ids
 ;
 
 INSERT INTO transform.document_revisions_production_added
@@ -150,7 +150,11 @@ SELECT
     , legacy.updated_at
     , legacy.revision
     , legacy.discipline
-    , CASE WHEN image_updated IS NOT NULL THEN NULL ELSE production.image_identificator END
+    , CASE
+        WHEN COALESCE(legacy.legacy_path, '') <> COALESCE(production.legacy_path, '') THEN NULL
+        WHEN COALESCE(legacy.legacy_filename, '') <> COALESCE(production.legacy_filename, '') THEN NULL
+        ELSE production.image_identificator
+    END
     , legacy.is_old
     , folders.id
     , legacy.legacy_path
@@ -162,21 +166,15 @@ FROM
     JOIN transform.document_revisions_production production
         ON legacy.legacy_id = production.legacy_id
         AND legacy.legacy_source = production.legacy_source
-    JOIN transform.document_revisions_production image_updated
-        ON legacy.legacy_id = production.legacy_id
-        AND legacy.legacy_source = production.legacy_source
-        AND (
-            COALESCE(legacy.legacy_path, '') <> COALESCE(production.legacy_path, '')
-            OR COALESCE(legacy.legacy_filename, '') <> COALESCE(production.legacy_filename, '')
-        )
 WHERE
     COALESCE(legacy.name, '') <> COALESCE(production.name, '')
     OR COALESCE(legacy.status, '') <> COALESCE(production.status, '')
     OR COALESCE(legacy.description, '') <> COALESCE(production.description, '')
-    OR COALESCE(legacy.document_attributes, '') <> COALESCE(production.document_attributes, '')
+    OR legacy.document_attributes <> production.document_attributes
     OR COALESCE(legacy.revision, '') <> COALESCE(production.revision, '')
     OR COALESCE(legacy.discipline, '') <> COALESCE(production.discipline, '')
-    OR COALESCE(legacy.is_old, '') <> COALESCE(production.is_old, '')
+    OR legacy.is_old <> production.is_old
     OR COALESCE(folders.id, 0) <> COALESCE(production.folder_id, 0)
-    OR image_updated IS NOT NULL
+    OR COALESCE(legacy.legacy_path, '') <> COALESCE(production.legacy_path, '')
+    OR COALESCE(legacy.legacy_filename, '') <> COALESCE(production.legacy_filename, '')
 ;

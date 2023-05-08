@@ -7,6 +7,8 @@ INSERT INTO transform.documents_legacy
     , created_at
     , updated_at
     , subproject
+    , legacy_ids
+    , legacy_source
 )
 SELECT
     documents.legacy_documentable_id
@@ -16,6 +18,8 @@ SELECT
     , MIN(documents.created_at)
     , MAX(documents.updated_at)
     , subprojects.value
+    , ARRAY_AGG(documents.legacy_id)
+    , documents.legacy_source
 FROM
     staging.documents
     LEFT JOIN staging.document_numbers numbers

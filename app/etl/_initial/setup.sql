@@ -27,3 +27,18 @@ ALTER TABLE public.users
     , DROP COLUMN IF EXISTS legacy_owner_id
     , ADD COLUMN IF NOT EXISTS legacy_ids JSONB DEFAULT '[]'
 ;
+
+CREATE INDEX IF NOT EXISTS index_facilities_legacy_id ON public.facilities (legacy_id);
+CREATE INDEX IF NOT EXISTS index_facilities_legacy_source ON public.facilities (legacy_source);
+CREATE INDEX IF NOT EXISTS index_projects_legacy_id ON public.projects (legacy_id);
+CREATE INDEX IF NOT EXISTS index_projects_legacy_source ON public.projects (legacy_source);
+CREATE INDEX IF NOT EXISTS index_folders_legacy_id ON public.folders (legacy_id);
+CREATE INDEX IF NOT EXISTS index_folders_legacy_source ON public.folders (legacy_source);
+
+-- TODO: Remove project duplicates -- ONETIME FIX -- Remove after initial run!
+DELETE FROM
+    public.projects
+USING public.facilities
+    WHERE projects.legacy_id = facilities.legacy_id
+    AND projects.legacy_source = facilities.legacy_source
+;
