@@ -1,4 +1,4 @@
-INSERT INTO transform.facilities
+INSERT INTO transform.facilities_legacy
 (
     legacy_id
     , legacy_source

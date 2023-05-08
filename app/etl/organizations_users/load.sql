@@ -6,7 +6,7 @@ INSERT INTO public.organizations_users
     , mobile_phone
     , location_id
 )
-SELECT
+SELECT DISTINCT
     organizations.id
     , users.id
     , relations.phone
@@ -14,17 +14,37 @@ SELECT
     , locations.id
 FROM
     staging.organizations_users relations
-    JOIN transform.user_aliases user_aliases
-        ON user_aliases.legacy_id = relations.legacy_user_id
-        AND user_aliases.legacy_source = relations.legacy_source
-    JOIN public.users users
-        ON user_aliases.user_id = users.legacy_id
+    JOIN (
+        SELECT
+            users.id
+            , legacy.id legacy_id
+            , legacy.source legacy_source
+        FROM
+            public.users users
+            CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
+                AS legacy(id TEXT, source TEXT)
+    ) users
+        ON relations.legacy_user_id = users.legacy_id
+        AND relations.legacy_source = users.legacy_source
+    JOIN (
+        SELECT
+            organizations.id
+            , legacy.id legacy_id
+            , legacy.source legacy_source
+        FROM
+            public.organizations organizations
+            CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
+                AS legacy(id TEXT, source TEXT)
+    ) organizations
+        ON relations.legacy_organization_id = organizations.legacy_id
+        AND relations.legacy_source = organizations.legacy_source
     JOIN public.locations locations
         ON locations.legacy_id = relations.legacy_location_id
         AND locations.legacy_source = relations.legacy_source
-    JOIN transform.organization_aliases organization_aliases
-        ON organization_aliases.legacy_id = relations.legacy_organization_id
-        AND organization_aliases.legacy_source = relations.legacy_source
-    JOIN public.organizations organizations
-        ON organization_aliases.user_id = organizations.legacy_id
+    LEFT JOIN public.organizations_users target
+         ON target.organization_id = organizations.id
+         AND target.user_id = users.id
+         AND target.location_id = locations.id
+WHERE
+    target.id IS NULL
 ;

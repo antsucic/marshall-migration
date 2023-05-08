@@ -1,4 +1,4 @@
-INSERT INTO transform.locations
+INSERT INTO transform.locations_legacy
 (
     legacy_id
     , legacy_facility_id

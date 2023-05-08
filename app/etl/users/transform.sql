@@ -1,6 +1,7 @@
-INSERT INTO transform.users
+INSERT INTO transform.users_legacy
 (
-    email
+    legacy_ids
+    , email
     , first_name
     , last_name
     , status
@@ -9,36 +10,42 @@ INSERT INTO transform.users
     , updated_at
 )
 SELECT
-    users.email
-    , MAX(users.first_name)
-    , MAX(users.last_name)
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'type', 'user',
+            'id', entities.legacy_id,
+            'source', entities.legacy_source
+        )
+    )
+    , entities.email
+    , MAX(entities.first_name)
+    , MAX(entities.last_name)
     , CASE
-        WHEN 2 = ANY(ARRAY_AGG(users.status::integer)) THEN 'active'
-        WHEN 1 = ANY(ARRAY_AGG(users.status::integer)) THEN 'pending'
+        WHEN 2 = ANY(ARRAY_AGG(entities.status::integer)) THEN 'active'
+        WHEN 1 = ANY(ARRAY_AGG(entities.status::integer)) THEN 'pending'
         ELSE 'inactive'
     END
     , CASE
-        WHEN MAX(owners.legacy_id) IS NOT NULL THEN 'owner'
-        WHEN users.email LIKE '%@landrco.com' THEN 'admin_assistant'
-        WHEN users.email LIKE '%@lrplot.com' THEN 'admin_assistant'
-        WHEN users.email LIKE '%@lraec.com' THEN 'admin_assistant'
+        WHEN entities.email LIKE '%@landrco.com' THEN 'admin_assistant'
+        WHEN entities.email LIKE '%@lrplot.com' THEN 'admin_assistant'
+        WHEN entities.email LIKE '%@lraec.com' THEN 'admin_assistant'
+        WHEN MAX(owners.email) IS NOT NULL THEN 'owner'
         ELSE 'organization_user'
     END
-    , COALESCE(MIN(users.created_at), NOW())
-    , COALESCE(MAX(users.updated_at), NOW())
+    , COALESCE(MIN(entities.created_at), NOW())
+    , COALESCE(MAX(entities.updated_at), NOW())
 FROM
-    staging.users
+    staging.entities
     LEFT JOIN staging.owners
-        ON users.email = owners.email
-WHERE
-    owners.legacy_id IS NULL
+        ON entities.email = owners.email
 GROUP BY
-    users.email
+    entities.email
 ;
 
-INSERT INTO transform.owners
+INSERT INTO transform.users_legacy
 (
-    email
+    legacy_ids
+    , email
     , first_name
     , last_name
     , status
@@ -47,24 +54,27 @@ INSERT INTO transform.owners
     , updated_at
 )
 SELECT
-    COALESCE(
-        email,
-        CONCAT(
-            'followup_',
-            legacy_id,
-            '@',
-            COALESCE(
-                REGEXP_REPLACE(LOWER(first_name), '[^\w]+', ''),
-                REGEXP_REPLACE(LOWER(last_name), '[^\w]+', ''),
-                'empty.com'
-            )
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'type', 'owner',
+            'id', owners.legacy_id,
+            'source', owners.legacy_source,
+            'company_id', owners.legacy_company_id
+        )
+    )
+    , COALESCE(
+        owners.email,
+        'followup_' || owners.legacy_id || '@' || COALESCE(
+            REGEXP_REPLACE(LOWER(owners.first_name), '[\W\s]*', '', 'g'),
+            REGEXP_REPLACE(LOWER(owners.last_name), '[\W\s]*', '', 'g'),
+            'empty.com'
         )
     ) owner_email
-    , MAX(first_name)
-    , MAX(last_name)
+    , MAX(owners.first_name)
+    , MAX(owners.last_name)
     , CASE
-        WHEN 2 = ANY(ARRAY_AGG(status::integer)) THEN 'active'
-        WHEN 1 = ANY(ARRAY_AGG(status::integer)) THEN 'pending'
+        WHEN 2 = ANY(ARRAY_AGG(owners.status::integer)) THEN 'active'
+        WHEN 1 = ANY(ARRAY_AGG(owners.status::integer)) THEN 'pending'
         ELSE 'inactive'
     END
     , 'owner'
@@ -72,48 +82,36 @@ SELECT
     , NOW()
 FROM
     staging.owners
+    LEFT JOIN staging.entities
+        ON owners.email = entities.email
+WHERE
+    entities.legacy_id IS NULL
 GROUP BY
     owner_email
 ;
 
-INSERT INTO transform.user_aliases
+INSERT INTO transform.users_production
 (
-    user_id
-    , legacy_id
-    , legacy_source
+    id
+    , email
+    , first_name
+    , last_name
+    , status
+    , "role"
+    , created_at
+    , updated_at
+    , legacy_ids
 )
 SELECT
-    transformation.id
-    , legacy_id
-    , legacy_source
+    id
+    , email
+    , first_name
+    , last_name
+    , status
+    , "role"
+    , created_at
+    , updated_at
+    , legacy_ids
 FROM
-    staging.users stage
-    JOIN transform.users transformation
-        ON stage.email = transformation.email
-;
-
-INSERT INTO transform.owner_aliases
-(
-    owner_id
-    , legacy_id
-    , legacy_source
-    , legacy_company_id
-)
-SELECT
-    transformation.id
-    , legacy_id
-    , legacy_source
-    , legacy_company_id
-FROM
-    staging.owners stage
-    JOIN transform.owners transformation
-        ON stage.email = COALESCE(
-            transformation.email,
-            CONCAT(
-                REGEXP_REPLACE(LOWER(transformation.first_name), '[^\w]+', ''),
-                '.',
-                REGEXP_REPLACE(LOWER(transformation.last_name), '[^\w]+', ''),
-                '@company.com'
-            )
-        )
+    public.users
 ;

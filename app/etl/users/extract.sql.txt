@@ -1,4 +1,4 @@
-INSERT INTO staging.users
+INSERT INTO staging.entities
 (
     legacy_id
     , legacy_source

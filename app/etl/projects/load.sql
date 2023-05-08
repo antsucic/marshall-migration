@@ -1,28 +1,43 @@
+UPDATE
+    public.projects
+SET
+    "name" = updates.name
+    , number = updates.number
+    , description = updates.description
+    , status = updates.status
+    , updated_at = updates.updated_at
+    , facility_id = updates.facility_id
+    , legacy_facility_id = updates.legacy_facility_id
+FROM
+    transform.projects_production_updated updates
+WHERE
+    projects.id = updates.id
+;
+
 INSERT INTO public.projects
 (
-    legacy_id
-    , legacy_source
-    , facility_id
-    , "name"
+    "name"
     , number
     , description
     , status
     , created_at
     , updated_at
+    , facility_id
+    , legacy_id
+    , legacy_facility_id
+    , legacy_source
 )
 SELECT
-    projects.legacy_id
-    , projects.legacy_source
-    , facilities.id
-    , projects."name"
-    , projects.number
-    , projects.description
-    , projects.status
-    , projects.created_at
-    , projects.updated_at
+    "name"
+    , number
+    , description
+    , status
+    , created_at
+    , updated_at
+    , facility_id
+    , legacy_id
+    , legacy_facility_id
+    , legacy_source
 FROM
-    transform.projects projects
-    LEFT JOIN public.facilities facilities
-        ON projects.legacy_facility_id = facilities.legacy_id
-        AND projects.legacy_source = facilities.legacy_source
+    transform.projects_production_added
 ;

@@ -1,11 +1,11 @@
-DROP TABLE IF EXISTS staging.users;
+DROP TABLE IF EXISTS staging.entities;
 DROP TABLE IF EXISTS staging.owners;
-DROP TABLE IF EXISTS transform.users;
-DROP TABLE IF EXISTS transform.user_aliases;
-DROP TABLE IF EXISTS transform.owners;
-DROP TABLE IF EXISTS transform.owner_aliases;
+DROP TABLE IF EXISTS transform.users_legacy;
+DROP TABLE IF EXISTS transform.users_production;
+DROP TABLE IF EXISTS transform.users_production_added;
+DROP TABLE IF EXISTS transform.users_production_updated;
 
-CREATE TABLE staging.users (
+CREATE TABLE staging.entities (
     legacy_id VARCHAR
     , legacy_source VARCHAR(100)
     , email VARCHAR
@@ -27,8 +27,8 @@ CREATE TABLE staging.owners (
     , status VARCHAR
 );
 
-CREATE TABLE transform.users (
-    id SERIAL PRIMARY KEY
+CREATE TABLE transform.users_legacy (
+    legacy_ids JSONB
     , email VARCHAR
     , first_name VARCHAR
     , last_name VARCHAR
@@ -38,13 +38,7 @@ CREATE TABLE transform.users (
     , updated_at TIMESTAMP
 );
 
-CREATE TABLE transform.user_aliases (
-    user_id BIGINT
-    , legacy_id VARCHAR(36)
-    , legacy_source VARCHAR(100)
-);
-
-CREATE TABLE transform.owners (
+CREATE TABLE transform.users_production (
     id SERIAL PRIMARY KEY
     , email VARCHAR
     , first_name VARCHAR
@@ -53,11 +47,28 @@ CREATE TABLE transform.owners (
     , "role" VARCHAR
     , created_at TIMESTAMP
     , updated_at TIMESTAMP
+    , legacy_ids JSONB
 );
 
-CREATE TABLE transform.owner_aliases (
-    owner_id BIGINT
-    , legacy_id VARCHAR
-    , legacy_source VARCHAR(100)
-    , legacy_company_id VARCHAR(36)
+CREATE TABLE transform.users_production_added (
+    email VARCHAR
+    , first_name VARCHAR
+    , last_name VARCHAR
+    , status VARCHAR
+    , "role" VARCHAR
+    , created_at TIMESTAMP
+    , updated_at TIMESTAMP
+    , legacy_ids JSONB
+);
+
+CREATE TABLE transform.users_production_updated (
+    id SERIAL PRIMARY KEY
+    , email VARCHAR
+    , first_name VARCHAR
+    , last_name VARCHAR
+    , status VARCHAR
+    , "role" VARCHAR
+    , created_at TIMESTAMP
+    , updated_at TIMESTAMP
+    , legacy_ids JSONB
 );

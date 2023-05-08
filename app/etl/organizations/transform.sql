@@ -1,11 +1,19 @@
-INSERT INTO transform.organizations
+INSERT INTO transform.organizations_legacy
 (
-    "name"
+    legacy_ids
+    , "name"
     , created_at
     , updated_at
 )
 SELECT
-    organizations."name"
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'id', organizations.legacy_id,
+            'source', organizations.legacy_source,
+            'location_id', organizations.legacy_location_id
+        )
+    )
+    , organizations."name"
     , MIN(organizations.created_at)
     , MAX(organizations.updated_at)
 FROM
@@ -14,20 +22,20 @@ GROUP BY
     organizations."name"
 ;
 
-INSERT INTO transform.organization_aliases
+INSERT INTO transform.organizations_production
 (
-    organization_id
-    , legacy_id
-    , legacy_source
-    , legacy_location_id
+    id
+    , "name"
+    , created_at
+    , updated_at
+    , legacy_ids
 )
 SELECT
-    transformation.id
-    , legacy_id
-    , legacy_source
-    , stage.legacy_location_id
+    id
+     , "name"
+     , created_at
+     , updated_at
+    , legacy_ids
 FROM
-    staging.organizations stage
-    LEFT JOIN transform.organizations transformation
-        ON stage.name = transformation.name
+    public.organizations
 ;

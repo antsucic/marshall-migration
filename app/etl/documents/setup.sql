@@ -8,8 +8,14 @@ DROP TABLE IF EXISTS staging.document_types;
 DROP TABLE IF EXISTS staging.document_issue_names;
 DROP TABLE IF EXISTS staging.document_issue_dates;
 DROP TABLE IF EXISTS staging.document_discipline_map;
-DROP TABLE IF EXISTS transform.documents;
-DROP TABLE IF EXISTS transform.document_revisions;
+DROP TABLE IF EXISTS transform.documents_legacy;
+DROP TABLE IF EXISTS transform.document_revisions_legacy;
+DROP TABLE IF EXISTS transform.documents_production;
+DROP TABLE IF EXISTS transform.documents_production_added;
+DROP TABLE IF EXISTS transform.documents_production_updated;
+DROP TABLE IF EXISTS transform.document_revisions_production;
+DROP TABLE IF EXISTS transform.document_revisions_production_added;
+DROP TABLE IF EXISTS transform.document_revisions_production_updated;
 
 CREATE TABLE staging.documents (
     legacy_id VARCHAR(36)
@@ -472,8 +478,9 @@ VALUES
     ('WWTP', 'PLUMBING')
 ;
 
-CREATE TABLE transform.documents (
+CREATE TABLE transform.documents_legacy (
     id SERIAL PRIMARY KEY
+    , legacy_ids VARCHAR[]
     , legacy_documentable_id VARCHAR(36)
     , legacy_source VARCHAR(100)
     , item_number VARCHAR
@@ -482,18 +489,16 @@ CREATE TABLE transform.documents (
     , created_at TIMESTAMP
     , updated_at TIMESTAMP
     , subproject VARCHAR
-    , legacy_revisions VARCHAR[]
 );
 
-CREATE INDEX ON transform.documents (legacy_documentable_id);
-CREATE INDEX ON transform.documents (legacy_source);
-CREATE INDEX ON transform.documents (item_number);
-CREATE INDEX ON transform.documents (document_type);
-CREATE INDEX ON transform.documents (subproject);
+CREATE INDEX ON transform.documents_legacy (legacy_documentable_id);
+CREATE INDEX ON transform.documents_legacy (legacy_source);
+CREATE INDEX ON transform.documents_legacy (item_number);
+CREATE INDEX ON transform.documents_legacy (document_type);
+CREATE INDEX ON transform.documents_legacy (subproject);
 
-CREATE TABLE transform.document_revisions (
-    document_id BIGINT
-    , legacy_id VARCHAR(36)
+CREATE TABLE transform.document_revisions_legacy (
+    legacy_id VARCHAR(36)
     , legacy_folder_id VARCHAR(36)
     , legacy_source VARCHAR(100)
     , legacy_path VARCHAR
@@ -508,3 +513,129 @@ CREATE TABLE transform.document_revisions (
     , discipline VARCHAR
     , is_old BOOLEAN
 );
+
+CREATE TABLE transform.documents_production AS
+    SELECT
+        documents.id
+        , documents.item_number
+        , documents.status
+        , documents.document_type
+        , documents.created_at
+        , documents.updated_at
+        , documents.documentable_type
+        , documents.documentable_id
+        , documents.subproject
+        , COALESCE(documents.legacy_ids, ARRAY_AGG(revisions.legacy_id)::TEXT[]) AS legacy_ids
+        , COALESCE(documents.legacy_source, MAX(revisions.legacy_source)) AS legacy_source
+    FROM
+        public.documents
+        JOIN public.document_revisions revisions
+            ON documents.id = revisions.document_id
+    GROUP BY
+        documents.id
+;
+
+CREATE TABLE transform.documents_production_added AS
+    SELECT
+        item_number
+        , status
+        , document_type
+        , created_at
+        , updated_at
+        , documentable_type
+        , documentable_id
+        , subproject
+        , legacy_ids
+        , legacy_source
+    FROM
+        public.documents
+    WHERE
+        FALSE
+;
+
+CREATE TABLE transform.documents_production_updated AS
+    SELECT
+        id
+        , item_number
+        , status
+        , document_type
+        , updated_at
+        , documentable_type
+        , documentable_id
+        , subproject
+        , legacy_ids
+        , legacy_source
+    FROM
+        public.documents
+    WHERE
+        FALSE
+;
+
+CREATE TABLE transform.document_revisions_production AS
+    SELECT
+        id
+        , document_id
+        , "name"
+        , status
+        , description
+        , document_attributes
+        , created_at
+        , updated_at
+        , revision
+        , discipline
+        , image_identificator
+        , is_old
+        , folder_id
+        , legacy_id
+        , legacy_source
+        , legacy_path
+        , legacy_filename
+    FROM
+        public.document_revisions
+;
+
+CREATE TABLE transform.document_revisions_production_added AS
+    SELECT
+        document_id
+        , "name"
+        , status
+        , description
+        , document_attributes
+        , created_at
+        , updated_at
+        , revision
+        , discipline
+        , is_old
+        , folder_id
+        , legacy_id
+        , legacy_source
+        , legacy_path
+        , legacy_filename
+    FROM
+        public.document_revisions
+    WHERE
+        FALSE
+;
+
+CREATE TABLE transform.document_revisions_production_updated AS
+    SELECT
+        id
+        , document_id
+        , "name"
+        , status
+        , description
+        , document_attributes
+        , created_at
+        , updated_at
+        , revision
+        , discipline
+        , image_identificator
+        , is_old
+        , folder_id
+        , legacy_path
+        , legacy_filename
+    FROM
+        public.document_revisions
+    WHERE
+        FALSE
+;

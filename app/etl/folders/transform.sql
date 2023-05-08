@@ -1,4 +1,4 @@
-INSERT INTO transform.folders
+INSERT INTO transform.folders_legacy
 (
     legacy_id
     , legacy_folderable_id
@@ -18,4 +18,30 @@ SELECT
     , COALESCE(created_at, NOW())
 FROM
     staging.folders
+;
+
+INSERT INTO transform.folders_production
+(
+    id
+    , parent_id
+    , name
+    , created_at
+    , updated_at
+    , folderable_type
+    , folderable_id
+    , legacy_id
+    , legacy_source
+)
+SELECT
+    id
+     , parent_id
+     , name
+     , created_at
+     , updated_at
+     , folderable_type
+     , folderable_id
+     , legacy_id
+     , legacy_source
+FROM
+    public.folders
 ;
