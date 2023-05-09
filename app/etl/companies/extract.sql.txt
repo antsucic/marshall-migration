@@ -16,7 +16,7 @@ FROM
     "#{source}"."Companies" companies
     LEFT JOIN "#{source}"."Owners" owners
         ON owners."Company_Id" = companies."Id"
-        AND owners."Status" = 2
+        AND owners."Status"::INTEGER = 2
 GROUP BY
     companies."Id"
 ;

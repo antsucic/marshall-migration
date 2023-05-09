@@ -20,9 +20,9 @@ end
 
 def attribute_values_columns
   {
-    PK_Id: 'PK_Id',
-    Attribute_Id: 'Attribute_Id',
-    Object_Id: 'Object_Id',
+    PK_Id: replace_newlines('PK_Id'),
+    Attribute_Id: replace_newlines('Attribute_Id'),
+    Object_Id: replace_newlines('Object_Id'),
     Attr_Value: replace_newlines('Attr_Value'),
   }
 end
@@ -160,10 +160,10 @@ end
 
 def vault_entries_columns
   {
-    Id: 'Id',
-    Vault_Directory: 'Vault_Directory',
-    Vault_Filename: 'Vault_Filename',
-    Vault_Storage_Device_Id: 'Vault_Storage_Device_Id',
+    Id: replace_newlines('Id'),
+    Vault_Directory: replace_newlines('Vault_Directory'),
+    Vault_Filename: replace_newlines('Vault_Filename'),
+    Vault_Storage_Device_Id: replace_newlines('Vault_Storage_Device_Id'),
   }
 end
 
