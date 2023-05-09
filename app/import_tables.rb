@@ -1,3 +1,10 @@
+def problem_tables
+  {
+    Attribute_Values: attribute_values_columns,
+    Vault_Entries: vault_entries_columns,
+  }
+end
+
 def import_tables
   {
     Attribute_Values: attribute_values_columns,

@@ -11,11 +11,11 @@ target_user = ENV['DATABASE_USERNAME']
 target_pass = ENV['DATABASE_PASSWORD']
 target_name = ENV['DATABASE_NAME']
 
-clients.each do |client|
+%w[PDM-CHS PDM-ESA PDM-LifePoint].each do |client|
   path = "dump/#{client}"
   FileUtils.mkdir_p(path) unless File.exists?(path)
 
-  import_tables.each do |table, columns|
+  problem_tables.each do |table, columns|
     puts "\n"
 
     file = "#{path}/#{table}.csv"
@@ -42,5 +42,5 @@ clients.each do |client|
     puts "RELOADED #{client}.#{table}".ljust(100)
   end
 
-  system("rm -rf #{path}")
+  #system("rm -rf #{path}")
 end
