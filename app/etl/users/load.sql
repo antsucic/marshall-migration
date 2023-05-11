@@ -5,7 +5,6 @@ SET
     , first_name = updates.first_name
     , last_name = updates.last_name
     , status = updates.status
-    , "role" = updates.role
     , updated_at = updates.updated_at
     , legacy_ids = updates.legacy_ids
 FROM

@@ -9,9 +9,15 @@ begin
 
     import_tables.each do |table, columns|
       connection.exec <<-SQL
-        CREATE TABLE IF NOT EXISTS "#{client}"."#{table}" (
-          "#{columns.keys.join('" VARCHAR, "')}" VARCHAR
-        )
+        DROP TABLE IF EXISTS "#{client}"."#{table}"
+      SQL
+
+      column_with_types = columns.keys.map do |column|
+        "\"#{column}\" #{column_types(table, column)}"
+      end
+
+      connection.exec <<-SQL
+        CREATE TABLE "#{client}"."#{table}" (#{column_with_types.join(', ')})
       SQL
     end
   end

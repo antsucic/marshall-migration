@@ -18,6 +18,46 @@ def import_tables
   }
 end
 
+def column_types(table, column)
+  definition = {
+    Attribute_Values: {
+      PK_Id: 'BIGINT',
+    },
+    Companies: {
+      Status: 'INTEGER',
+    },
+    Entities: {
+      Status: 'INTEGER',
+      Last_Edit_DateTime: 'TIMESTAMP',
+      Enter_DateTime: 'TIMESTAMP',
+    },
+    Folders: {
+      Create_Date: 'TIMESTAMP',
+    },
+    Items: {
+      Status: 'INTEGER',
+      Enter_Date: 'TIMESTAMP',
+      Last_Edit_DateTime: 'TIMESTAMP',
+      Is_Current_Version: 'INTEGER',
+    },
+    Locations: {
+      Last_Edit_DateTime: 'TIMESTAMP',
+    },
+    Organizations: {
+      Last_Edit_DateTime: 'TIMESTAMP',
+    },
+    Owners: {
+      Status: 'INTEGER',
+    },
+    Products: {
+      Status: 'INTEGER',
+      Enter_Date: 'TIMESTAMP',
+    },
+  }
+
+  definition[table] ? definition[table][column] || 'VARCHAR' : 'VARCHAR'
+end
+
 def attribute_values_columns
   {
     PK_Id: replace_newlines('PK_Id'),

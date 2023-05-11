@@ -57,6 +57,5 @@ WHERE
     OR COALESCE(legacy.first_name, '') <> COALESCE(production.first_name, '')
     OR COALESCE(legacy.last_name, '') <> COALESCE(production.last_name, '')
     OR COALESCE(legacy.status, '') <> COALESCE(production.status, '')
-    OR COALESCE(legacy.role, '') <> COALESCE(production.role, '')
     OR COALESCE(legacy.legacy_ids::VARCHAR, '') <> COALESCE(production.legacy_ids::VARCHAR, '')
 ;

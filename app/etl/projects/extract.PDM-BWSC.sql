@@ -22,5 +22,5 @@ FROM
     "PDM-BWSC"."Products" products
     LEFT JOIN "PDM-BWSC"."Attribute_Values" attributes
         ON attributes."Object_Id" = products."Id"
-       AND attributes."Attribute_Id" = 'SYS_ATTR4'
+        AND attributes."Attribute_Id" = 'SYS_ATTR4'
 ;
