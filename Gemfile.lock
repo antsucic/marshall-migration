@@ -1,12 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    dotenv (2.8.1)
     pg (1.4.4)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  dotenv
   pg
 
 RUBY VERSION

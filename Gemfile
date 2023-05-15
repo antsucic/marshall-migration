@@ -7,3 +7,4 @@ ruby '3.1.2'
 
 # Database connection
 gem 'pg'
+gem 'dotenv'

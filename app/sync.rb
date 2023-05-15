@@ -1,3 +1,7 @@
+require "dotenv"
+
+Dotenv.load('.env.production', '.env')
+
 puts "PREPARING SCHEMAS"
 require "./app/prepare.rb"
 
