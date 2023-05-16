@@ -51,7 +51,9 @@ FROM
          ON (legacy.name = production.name OR legacy.legacy_ids && production.legacy_ids)
          AND legacy.legacy_source = COALESCE(production.legacy_source, legacy.legacy_source)
 WHERE
-    COALESCE(legacy.name, '') <> COALESCE(production.name, '')
+    legacy.legacy_ids <> production.legacy_ids
+    OR COALESCE(legacy.legacy_source, '') <> COALESCE(production.legacy_source, '')
+    OR COALESCE(legacy.name, '') <> COALESCE(production.name, '')
     OR COALESCE(legacy.phone, '') <> COALESCE(production.phone, '')
     OR COALESCE(legacy.status, '') <> COALESCE(production.status, '')
 ;

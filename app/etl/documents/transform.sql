@@ -18,7 +18,7 @@ SELECT
     , MIN(documents.created_at)
     , MAX(documents.updated_at)
     , subprojects.value
-    , ARRAY_AGG(documents.legacy_id)
+    , ARRAY_AGG(documents.legacy_id ORDER BY documents.legacy_id)
     , documents.legacy_source
 FROM
     staging.documents

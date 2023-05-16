@@ -14,7 +14,7 @@ SELECT
     , CASE WHEN 2 = ANY(ARRAY_AGG(status::integer)) THEN 'active' ELSE 'inactive' END
     , NOW()
     , NOW()
-    , ARRAY_AGG(legacy_id)
+    , ARRAY_AGG(legacy_id ORDER BY legacy_id)
     , MAX(legacy_source)
 FROM
     staging.companies

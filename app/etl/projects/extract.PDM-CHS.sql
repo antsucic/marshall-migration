@@ -22,11 +22,12 @@ FROM
     "PDM-CHS"."Products" products
     LEFT JOIN "PDM-CHS"."Products" facilities
         ON facilities."Display_Name" ~* '^_[^_].*'
-        AND products."Display_Name" ~* CONCAT(RTRIM(facilities."Display_Name", '_'), '.*')
         AND products."Status" = facilities."Status"
     LEFT JOIN "PDM-CHS"."Attribute_Values" attributes
         ON attributes."Object_Id" = products."Id"
         AND attributes."Attribute_Id" = 'SYS_ATTR4'
+WHERE
+    products."Display_Name" ~* CONCAT('^', LTRIM(facilities."Display_Name", '_'), '.*')
 GROUP BY
     products."Id"
 ;

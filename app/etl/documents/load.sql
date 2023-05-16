@@ -56,7 +56,6 @@ SET
     , discipline = updates.discipline
     , image_identificator = updates.image_identificator
     , is_old = updates.is_old
-    , folder_id = updates.folder_id
     , legacy_path = updates.legacy_path
     , legacy_filename = updates.legacy_filename
 FROM

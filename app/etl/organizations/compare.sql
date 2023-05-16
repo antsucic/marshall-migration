@@ -33,8 +33,7 @@ SELECT
 FROM
     transform.organizations_legacy legacy
     JOIN transform.organizations_production production
-         ON legacy.name = production.name
+        ON legacy.name = production.name
 WHERE
-    COALESCE(legacy.name, '') <> COALESCE(production.name, '')
-    OR COALESCE(legacy.legacy_ids::VARCHAR, '') <> COALESCE(production.legacy_ids::VARCHAR, '')
+    legacy.legacy_ids = '{}'
 ;

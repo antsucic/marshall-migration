@@ -70,7 +70,7 @@ FROM
         ON legacy.legacy_documentable_id = projects.legacy_id
         AND legacy.legacy_source = projects.legacy_source
     JOIN transform.documents_production production
-        ON legacy.legacy_ids = production.legacy_ids
+        ON legacy.legacy_ids && production.legacy_ids
         AND legacy.legacy_source = production.legacy_source
 WHERE
     COALESCE(legacy.item_number, '') <> COALESCE(production.item_number, '')
@@ -174,7 +174,6 @@ WHERE
     OR COALESCE(legacy.revision, '') <> COALESCE(production.revision, '')
     OR COALESCE(legacy.discipline, '') <> COALESCE(production.discipline, '')
     OR legacy.is_old <> production.is_old
-    OR COALESCE(folders.id, 0) <> COALESCE(production.folder_id, 0)
     OR COALESCE(legacy.legacy_path, '') <> COALESCE(production.legacy_path, '')
     OR COALESCE(legacy.legacy_filename, '') <> COALESCE(production.legacy_filename, '')
 ;

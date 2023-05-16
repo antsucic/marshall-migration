@@ -42,3 +42,20 @@ USING public.facilities
     WHERE projects.legacy_id = facilities.legacy_id
     AND projects.legacy_source = facilities.legacy_source
 ;
+
+-- TODO: Remove location duplicates -- ONETIME FIX -- Remove after initial run!
+DELETE FROM
+    public.locations
+USING (
+    SELECT
+        locations.id
+    FROM
+        public.locations
+        LEFT JOIN facilities
+            ON locations.id = facilities.location_id
+    WHERE
+        locations.legacy_facility_id IS NOT NULL
+        AND facilities.id IS NULL
+) AS duplicates
+WHERE
+    locations.id = duplicates.id

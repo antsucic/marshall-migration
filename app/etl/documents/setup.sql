@@ -528,7 +528,7 @@ CREATE TABLE transform.documents_production AS
         , documents.subproject
         , CASE
             WHEN documents.legacy_ids = '{}'
-            THEN ARRAY_AGG(revisions.legacy_id)::TEXT[]
+            THEN ARRAY_AGG(revisions.legacy_id ORDER BY revisions.legacy_id)::TEXT[]
             ELSE documents.legacy_ids
         END AS legacy_ids
         , COALESCE(documents.legacy_source, MAX(revisions.legacy_source)) AS legacy_source

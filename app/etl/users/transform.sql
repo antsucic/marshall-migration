@@ -16,6 +16,7 @@ SELECT
             'id', entities.legacy_id,
             'source', entities.legacy_source
         )
+        ORDER BY entities.legacy_id
     )
     , entities.email
     , MAX(entities.first_name)
@@ -61,6 +62,7 @@ SELECT
             'source', owners.legacy_source,
             'company_id', owners.legacy_company_id
         )
+        ORDER BY owners.legacy_id
     )
     , COALESCE(
         owners.email,

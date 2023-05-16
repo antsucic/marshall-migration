@@ -25,8 +25,11 @@ SELECT
 FROM
     transform.locations_legacy legacy
     LEFT JOIN transform.locations_production production
-        ON legacy.legacy_id = production.legacy_id
-        AND legacy.legacy_source = production.legacy_source
+        ON legacy.legacy_source = production.legacy_source
+        AND (
+            legacy.legacy_id = production.legacy_id
+            OR legacy.legacy_facility_id = production.legacy_facility_id
+        )
 WHERE
     production.id IS NULL
 ;
@@ -54,8 +57,11 @@ SELECT
 FROM
     transform.locations_legacy legacy
     JOIN transform.locations_production production
-         ON legacy.legacy_id = production.legacy_id
-         AND legacy.legacy_source = production.legacy_source
+        ON legacy.legacy_source = production.legacy_source
+        AND (
+            legacy.legacy_id = production.legacy_id
+            OR legacy.legacy_facility_id = production.legacy_facility_id
+        )
 WHERE
     COALESCE(legacy.address, '') <> COALESCE(production.address, '')
     OR COALESCE(legacy.city, '') <> COALESCE(production.city, '')
