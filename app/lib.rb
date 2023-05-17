@@ -45,6 +45,20 @@ def clients
   ]
 end
 
+def table_exists(connection, schema, table)
+  query = <<-SQL
+    SELECT EXISTS (
+      SELECT FROM
+        pg_tables
+      WHERE
+        schemaname = '#{schema}'
+        AND tablename  = '#{table}'
+      )
+  SQL
+
+  connection.exec(query).first['exists'] == 't'
+end
+
 def run_script(connection, path)
   puts "     #{Time.now}: Running #{path} script!"
   connection.exec(File.open(path).read)

@@ -3,6 +3,7 @@ GEM
   specs:
     dotenv (2.8.1)
     pg (1.4.4)
+    table_print (1.5.7)
 
 PLATFORMS
   x86_64-linux
@@ -10,6 +11,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   pg
+  table_print
 
 RUBY VERSION
    ruby 3.1.2p20

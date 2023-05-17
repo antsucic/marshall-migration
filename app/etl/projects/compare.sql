@@ -63,4 +63,5 @@ WHERE
     OR COALESCE(legacy.number, '') <> COALESCE(production.number, '')
     OR COALESCE(legacy.description, '') <> COALESCE(production.description, '')
     OR COALESCE(legacy.status, '') <> COALESCE(production.status, '')
+    OR COALESCE(facilities.id, 0) <> COALESCE(production.facility_id, 0)
 ;

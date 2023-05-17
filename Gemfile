@@ -8,3 +8,4 @@ ruby '3.1.2'
 # Database connection
 gem 'pg'
 gem 'dotenv'
+gem 'table_print'
