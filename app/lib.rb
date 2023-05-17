@@ -1,4 +1,7 @@
 require_relative 'import_tables'
+require "dotenv"
+
+Dotenv.load('.env.production', '.env')
 
 def connection_parameters
   {
