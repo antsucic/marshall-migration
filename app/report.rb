@@ -6,7 +6,7 @@ begin
   connection = PG::Connection.new(**connection_parameters)
 
   tables = {}
-  load_priority.each do |entity|
+  report_tables.each do |entity|
     tables[entity] = {}
 
     %w[added updated].each do |action|
@@ -34,5 +34,6 @@ rescue PG::Error => error
   puts error.message
 
 ensure
+  connection ||= nil
   connection.close if connection
 end

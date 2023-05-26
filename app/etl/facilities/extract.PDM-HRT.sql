@@ -13,7 +13,10 @@ SELECT
     , 'PDM-HRT'
     , companies."Id"
     , products."Thumbnail_File_Id"
-    , products."Display_Name"
+    , CASE
+        WHEN numbers."Object_Id" IS NULL THEN products."Display_Name"
+        ELSE '[' || numbers."Attr_Value" || '] ' || products."Display_Name"
+    END
     , products."Status"
     , products."Enter_Date"
 FROM
@@ -22,4 +25,9 @@ FROM
         ON products."Owner_Id" = owners."Id"
     JOIN "PDM-HRT"."Companies" companies
         ON owners."Company_Id" = companies."Id"
+    JOIN "PDM-HRT"."Attributes" attributes
+        ON attributes."Display_Name" = 'Facility ID Number'
+    LEFT JOIN "PDM-HRT"."Attribute_Values" numbers
+        ON products."Id" = numbers."Object_Id"
+        AND attributes."Id" = numbers."Attribute_Id"
 ;

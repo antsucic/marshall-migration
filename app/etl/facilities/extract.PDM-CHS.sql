@@ -8,7 +8,10 @@ INSERT INTO staging.facilities
     , created_at
 )
 SELECT
-    'DEFAULT'
+    CASE
+        WHEN companies."Display_Name" = 'CHS' THEN 'DEFAULT'
+        ELSE companies."Display_Name" || '_DEFAULT'
+    END
     , 'PDM-CHS'
     , companies."Id"
     , 'Primary Facility'
@@ -16,8 +19,6 @@ SELECT
     , NOW()
 FROM
     "PDM-CHS"."Companies" companies
-WHERE
-    companies."Display_Name" = 'CHS'
 ;
 
 INSERT INTO staging.facilities

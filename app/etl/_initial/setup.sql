@@ -3,13 +3,19 @@ CREATE SCHEMA IF NOT EXISTS transform;
 
 ALTER TABLE public.companies
     DROP COLUMN IF EXISTS legacy_id
-    , ADD COLUMN IF NOT EXISTS legacy_ids TEXT[] DEFAULT '{}'
-    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
+    , DROP COLUMN IF EXISTS legacy_ids
+    , DROP COLUMN IF EXISTS legacy_source
+    , ADD COLUMN IF NOT EXISTS legacy_sources JSONB DEFAULT '[]'
 ;
 
 ALTER TABLE public.documents
     DROP COLUMN IF EXISTS legacy_id
     , ADD COLUMN IF NOT EXISTS legacy_ids TEXT[] DEFAULT '{}'
+    , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
+;
+
+ALTER TABLE public.document_custom_attributes
+    ADD COLUMN IF NOT EXISTS legacy_id VARCHAR(36)
     , ADD COLUMN IF NOT EXISTS legacy_source VARCHAR(100)
 ;
 
@@ -35,27 +41,3 @@ CREATE INDEX IF NOT EXISTS index_projects_legacy_source ON public.projects (lega
 CREATE INDEX IF NOT EXISTS index_folders_legacy_id ON public.folders (legacy_id);
 CREATE INDEX IF NOT EXISTS index_folders_legacy_source ON public.folders (legacy_source);
 
--- TODO: Remove project duplicates -- ONETIME FIX -- Remove after initial run!
-DELETE FROM
-    public.projects
-USING public.facilities
-    WHERE projects.legacy_id = facilities.legacy_id
-    AND projects.legacy_source = facilities.legacy_source
-;
-
--- TODO: Remove location duplicates -- ONETIME FIX -- Remove after initial run!
-DELETE FROM
-    public.locations
-USING (
-    SELECT
-        locations.id
-    FROM
-        public.locations
-        LEFT JOIN facilities
-            ON locations.id = facilities.location_id
-    WHERE
-        locations.legacy_facility_id IS NOT NULL
-        AND facilities.id IS NULL
-) AS duplicates
-WHERE
-    locations.id = duplicates.id

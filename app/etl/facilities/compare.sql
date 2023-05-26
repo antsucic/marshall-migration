@@ -1,3 +1,13 @@
+WITH companies AS (
+    SELECT
+        companies.id
+        , legacy.id legacy_id
+        , legacy.source legacy_source
+    FROM
+        public.companies companies
+        CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_sources::jsonb)
+            AS legacy(id TEXT, source TEXT)
+)
 INSERT INTO transform.facilities_production_added
 (
     company_id
@@ -22,8 +32,8 @@ SELECT
     , legacy.legacy_source
 FROM
     transform.facilities_legacy legacy
-    LEFT JOIN public.companies companies
-        ON legacy.legacy_company_id = ANY(companies.legacy_ids)
+    JOIN companies
+        ON legacy.legacy_company_id = companies.legacy_id
         AND legacy.legacy_source = companies.legacy_source
     LEFT JOIN public.locations locations
         ON legacy.legacy_id = locations.legacy_facility_id
@@ -35,6 +45,16 @@ WHERE
     production.id IS NULL
 ;
 
+WITH companies AS (
+    SELECT
+        companies.id
+        , legacy.id legacy_id
+        , legacy.source legacy_source
+    FROM
+        public.companies companies
+        CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_sources::jsonb)
+            AS legacy(id TEXT, source TEXT)
+)
 INSERT INTO transform.facilities_production_updated
 (
     id
@@ -58,10 +78,10 @@ FROM
     JOIN transform.facilities_production production
          ON legacy.legacy_id = production.legacy_id
          AND legacy.legacy_source = production.legacy_source
-    JOIN public.companies companies
-        ON legacy.legacy_company_id = ANY(companies.legacy_ids)
+    JOIN companies
+        ON legacy.legacy_company_id = companies.legacy_id
         AND legacy.legacy_source = companies.legacy_source
-    JOIN public.locations locations
+    LEFT JOIN public.locations locations
          ON legacy.legacy_id = locations.legacy_facility_id
         AND legacy.legacy_source = locations.legacy_source
 WHERE

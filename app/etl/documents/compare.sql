@@ -1,3 +1,11 @@
+WITH last_insert AS (
+    SELECT
+        MAX(created_at)::DATE date
+    FROM
+        transform.documents_legacy
+    WHERE
+        legacy_source IS NOT NULL
+)
 INSERT INTO transform.documents_production_added
 (
     item_number
@@ -24,6 +32,8 @@ SELECT
     , legacy.legacy_source
 FROM
     transform.documents_legacy legacy
+    JOIN last_insert
+        ON legacy.created_at >= last_insert.date
     LEFT JOIN public.facilities facilities
         ON legacy.legacy_documentable_id = facilities.legacy_id
         AND legacy.legacy_source = facilities.legacy_source
@@ -80,6 +90,43 @@ WHERE
     OR COALESCE(facilities.id, projects.id, 0) <> COALESCE(production.documentable_id, 0)
     OR COALESCE(legacy.subproject, '') <> COALESCE(production.subproject, '')
     OR legacy.legacy_ids <> production.legacy_ids
+;
+
+INSERT INTO transform.document_attributes
+(
+    legacy_id
+    , legacy_source
+    , value
+)
+SELECT
+    legacy.legacy_id
+    , legacy.legacy_source
+    , JSON_OBJECT_AGG(
+        production.id, legacy.value
+    )
+FROM
+    staging.document_attributes legacy
+    JOIN staging.document_types types
+        ON legacy.legacy_id = types.legacy_id
+        AND legacy.legacy_source = types.legacy_source
+    JOIN public.document_custom_attributes production
+        ON legacy.legacy_attribute_id = production.legacy_id
+        AND legacy.legacy_source = production.legacy_source
+        AND types.value = production.document_type
+GROUP BY
+    legacy.legacy_id,
+    legacy.legacy_source
+;
+
+UPDATE
+    transform.document_revisions_legacy revisions
+SET
+    document_attributes = document_attributes || attributes.value
+FROM
+    transform.document_attributes attributes
+WHERE
+    revisions.legacy_id = attributes.legacy_id
+    AND revisions.legacy_source = attributes.legacy_source
 ;
 
 INSERT INTO transform.document_revisions_production_added

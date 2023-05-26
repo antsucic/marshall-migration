@@ -16,7 +16,7 @@ SELECT
             'id', entities.legacy_id,
             'source', entities.legacy_source
         )
-        ORDER BY entities.legacy_id
+        ORDER BY entities.legacy_id, entities.legacy_source
     )
     , entities.email
     , MAX(entities.first_name)
@@ -62,13 +62,13 @@ SELECT
             'source', owners.legacy_source,
             'company_id', owners.legacy_company_id
         )
-        ORDER BY owners.legacy_id
+        ORDER BY owners.legacy_id, owners.legacy_source
     )
     , COALESCE(
         owners.email,
         'followup_' || owners.legacy_id || '@' || COALESCE(
-            REGEXP_REPLACE(LOWER(owners.first_name), '[\W\s]*', '', 'g'),
-            REGEXP_REPLACE(LOWER(owners.last_name), '[\W\s]*', '', 'g'),
+            REGEXP_REPLACE(LOWER(owners.first_name), '[\W\s]+', '', 'g'),
+            REGEXP_REPLACE(LOWER(owners.last_name), '[\W\s]+', '', 'g'),
             'empty.com'
         )
     ) owner_email

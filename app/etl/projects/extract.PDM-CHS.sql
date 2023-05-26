@@ -11,7 +11,10 @@ INSERT INTO staging.projects
 )
 SELECT
     products."Id"
-    , COALESCE(MAX(facilities."Id"), 'DEFAULT')
+    , COALESCE(MAX(facilities."Id"), CASE
+        WHEN MAX(companies."Display_Name") = 'CHS' THEN 'DEFAULT'
+        ELSE MAX(companies."Display_Name") || '_DEFAULT'
+    END)
     , 'PDM-CHS'
     , MAX(attributes."Attr_Value")
     , MAX(products."Display_Name")
@@ -22,12 +25,17 @@ FROM
     "PDM-CHS"."Products" products
     LEFT JOIN "PDM-CHS"."Products" facilities
         ON facilities."Display_Name" ~* '^_[^_].*'
+        AND products."Display_Name" ~* CONCAT('^', LTRIM(facilities."Display_Name", '_'), '.*')
         AND products."Status" = facilities."Status"
     LEFT JOIN "PDM-CHS"."Attribute_Values" attributes
         ON attributes."Object_Id" = products."Id"
         AND attributes."Attribute_Id" = 'SYS_ATTR4'
+    LEFT JOIN "PDM-CHS"."Owners" owners
+        ON products."Owner_Id" = owners."Id"
+    LEFT JOIN "PDM-CHS"."Companies" companies
+        ON owners."Company_Id" = companies."Id"
 WHERE
-    products."Display_Name" ~* CONCAT('^', LTRIM(facilities."Display_Name", '_'), '.*')
+    NOT products."Display_Name" ~* '^_[^_].*'
 GROUP BY
     products."Id"
 ;

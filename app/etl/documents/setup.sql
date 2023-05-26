@@ -8,7 +8,9 @@ DROP TABLE IF EXISTS staging.document_types;
 DROP TABLE IF EXISTS staging.document_issue_names;
 DROP TABLE IF EXISTS staging.document_issue_dates;
 DROP TABLE IF EXISTS staging.document_discipline_map;
-DROP TABLE IF EXISTS transform.documents_legacy;
+DROP TABLE IF EXISTS staging.document_attributes;
+DROP TABLE IF EXISTS transform.document_attributes;
+DROP TABLE IF EXISTS transform.documents_legacy CASCADE;
 DROP TABLE IF EXISTS transform.document_revisions_legacy;
 DROP TABLE IF EXISTS transform.documents_production;
 DROP TABLE IF EXISTS transform.documents_production_added;
@@ -16,6 +18,9 @@ DROP TABLE IF EXISTS transform.documents_production_updated;
 DROP TABLE IF EXISTS transform.document_revisions_production;
 DROP TABLE IF EXISTS transform.document_revisions_production_added;
 DROP TABLE IF EXISTS transform.document_revisions_production_updated;
+DROP VIEW IF EXISTS transform.check_dates CASCADE;
+DROP FUNCTION IF EXISTS transform.updated_documents_in;
+DROP PROCEDURE IF EXISTS transform.insert_document_updates();
 
 CREATE TABLE staging.documents (
     legacy_id VARCHAR(36)
@@ -58,6 +63,7 @@ CREATE TABLE staging.document_subprojects (
 );
 
 CREATE INDEX ON staging.document_subprojects (legacy_id);
+CREATE INDEX ON staging.document_subprojects (legacy_source);
 CREATE INDEX ON staging.document_subprojects (value);
 
 CREATE TABLE staging.document_revision_numbers (
@@ -67,6 +73,7 @@ CREATE TABLE staging.document_revision_numbers (
 );
 
 CREATE INDEX ON staging.document_revision_numbers (legacy_id);
+CREATE INDEX ON staging.document_revision_numbers (legacy_source);
 CREATE INDEX ON staging.document_revision_numbers (value);
 
 CREATE TABLE staging.document_disciplines (
@@ -76,6 +83,7 @@ CREATE TABLE staging.document_disciplines (
 );
 
 CREATE INDEX ON staging.document_disciplines (legacy_id);
+CREATE INDEX ON staging.document_disciplines (legacy_source);
 CREATE INDEX ON staging.document_disciplines (value);
 
 CREATE TABLE staging.document_numbers (
@@ -85,6 +93,7 @@ CREATE TABLE staging.document_numbers (
 );
 
 CREATE INDEX ON staging.document_numbers (legacy_id);
+CREATE INDEX ON staging.document_numbers (legacy_source);
 CREATE INDEX ON staging.document_numbers (value);
 
 CREATE TABLE staging.document_types (
@@ -94,6 +103,7 @@ CREATE TABLE staging.document_types (
 );
 
 CREATE INDEX ON staging.document_types (legacy_id);
+CREATE INDEX ON staging.document_types (legacy_source);
 CREATE INDEX ON staging.document_types (value);
 
 CREATE TABLE staging.document_issue_names (
@@ -103,6 +113,7 @@ CREATE TABLE staging.document_issue_names (
 );
 
 CREATE INDEX ON staging.document_issue_names (legacy_id);
+CREATE INDEX ON staging.document_issue_names (legacy_source);
 CREATE INDEX ON staging.document_issue_names (value);
 
 CREATE TABLE staging.document_issue_dates (
@@ -112,7 +123,20 @@ CREATE TABLE staging.document_issue_dates (
 );
 
 CREATE INDEX ON staging.document_issue_dates (legacy_id);
+CREATE INDEX ON staging.document_issue_dates (legacy_source);
 CREATE INDEX ON staging.document_issue_dates (value);
+
+CREATE TABLE staging.document_attributes (
+    legacy_id VARCHAR(36)
+    , legacy_attribute_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
+    , "value" VARCHAR
+);
+
+CREATE INDEX ON staging.document_attributes (legacy_id);
+CREATE INDEX ON staging.document_attributes (legacy_attribute_id);
+CREATE INDEX ON staging.document_attributes (legacy_source);
+CREATE INDEX ON staging.document_attributes (value);
 
 CREATE TABLE staging.document_discipline_map (
     legacy_value VARCHAR
@@ -477,6 +501,15 @@ VALUES
     ('Water Services', 'PLUMBING'),
     ('WWTP', 'PLUMBING')
 ;
+
+CREATE TABLE transform.document_attributes (
+    legacy_id VARCHAR(36)
+    , legacy_source VARCHAR(100)
+    , "value" JSONB
+);
+
+CREATE INDEX ON transform.document_attributes (legacy_id);
+CREATE INDEX ON transform.document_attributes (legacy_source);
 
 CREATE TABLE transform.documents_legacy (
     id SERIAL PRIMARY KEY

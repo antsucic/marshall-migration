@@ -1,3 +1,22 @@
+WITH users AS (
+    SELECT
+        users.id
+        , legacy.id legacy_id
+        , legacy.source legacy_source
+    FROM
+        public.users users
+        CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
+            AS legacy(id TEXT, source TEXT)
+), organizations AS (
+    SELECT
+        organizations.id
+        , legacy.id legacy_id
+        , legacy.source legacy_source
+    FROM
+        public.organizations organizations
+        CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
+            AS legacy(id TEXT, source TEXT)
+)
 INSERT INTO public.organizations_users
 (
     organization_id
@@ -14,28 +33,10 @@ SELECT DISTINCT
     , locations.id
 FROM
     staging.organizations_users relations
-    JOIN (
-        SELECT
-            users.id
-            , legacy.id legacy_id
-            , legacy.source legacy_source
-        FROM
-            public.users users
-            CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
-                AS legacy(id TEXT, source TEXT)
-    ) users
+    JOIN users
         ON relations.legacy_user_id = users.legacy_id
         AND relations.legacy_source = users.legacy_source
-    JOIN (
-        SELECT
-            organizations.id
-            , legacy.id legacy_id
-            , legacy.source legacy_source
-        FROM
-            public.organizations organizations
-            CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
-                AS legacy(id TEXT, source TEXT)
-    ) organizations
+    JOIN organizations
         ON relations.legacy_organization_id = organizations.legacy_id
         AND relations.legacy_source = organizations.legacy_source
     JOIN public.locations locations

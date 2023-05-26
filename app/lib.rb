@@ -11,7 +11,7 @@ def connection_parameters
     password: ENV['DATABASE_PASSWORD'],
     port: ENV['DATABASE_PORT'],
   }
-  end
+end
 
 def load_priority
   [
@@ -19,13 +19,29 @@ def load_priority
     :organizations,
     :locations,
     :companies,
+    :document_custom_attributes,
     :locations_users,
     :locations_organizations,
     :companies_users,
     :facilities,
     :projects,
     :folders,
+  ]
+end
+
+def report_tables
+  [
+    :users,
+    :organizations,
+    :locations,
+    :companies,
+    :document_custom_attributes,
+    :companies_users,
+    :facilities,
+    :projects,
+    :folders,
     :documents,
+    :document_revisions,
   ]
 end
 
@@ -62,10 +78,12 @@ end
 def run_script(connection, path)
   puts "     #{Time.now}: Running #{path} script!"
   connection.exec(File.open(path).read)
+  connection.reset()
 end
 
 def run_extraction_script(connection, path, source)
   puts "     #{Time.now}: Running #{path} script! Source: #{source}"
   query = File.open(path).read.gsub('"', '\"')
   connection.exec(eval("\"#{query}\""))
+  connection.reset()
 end

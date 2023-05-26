@@ -5,8 +5,7 @@ INSERT INTO transform.companies_production_added
     , status
     , created_at
     , updated_at
-    , legacy_ids
-    , legacy_source
+    , legacy_sources
 )
 SELECT
     legacy.name
@@ -14,13 +13,11 @@ SELECT
     , legacy.status
     , legacy.created_at
     , legacy.updated_at
-    , legacy.legacy_ids
-    , legacy.legacy_source
+    , legacy.legacy_sources
 FROM
     transform.companies_legacy legacy
     LEFT JOIN transform.companies_production production
-        ON (legacy.name = production.name OR legacy.legacy_ids && production.legacy_ids)
-        AND legacy.legacy_source = COALESCE(production.legacy_source, legacy.legacy_source)
+        ON legacy.name = production.name
 WHERE
     production.id IS NULL
 ;
@@ -33,8 +30,7 @@ INSERT INTO transform.companies_production_updated
     , status
     , created_at
     , updated_at
-    , legacy_ids
-    , legacy_source
+    , legacy_sources
 )
 SELECT
     production.id
@@ -43,16 +39,13 @@ SELECT
     , legacy.status
     , legacy.created_at
     , legacy.updated_at
-    , legacy.legacy_ids
-    , legacy.legacy_source
+    , legacy.legacy_sources
 FROM
     transform.companies_legacy legacy
     JOIN transform.companies_production production
-         ON (legacy.name = production.name OR legacy.legacy_ids && production.legacy_ids)
-         AND legacy.legacy_source = COALESCE(production.legacy_source, legacy.legacy_source)
+         ON legacy.name = production.name
 WHERE
-    legacy.legacy_ids <> production.legacy_ids
-    OR COALESCE(legacy.legacy_source, '') <> COALESCE(production.legacy_source, '')
+    legacy.legacy_sources <> production.legacy_sources
     OR COALESCE(legacy.name, '') <> COALESCE(production.name, '')
     OR COALESCE(legacy.phone, '') <> COALESCE(production.phone, '')
     OR COALESCE(legacy.status, '') <> COALESCE(production.status, '')

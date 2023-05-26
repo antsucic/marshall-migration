@@ -14,16 +14,24 @@ begin
 
   load_priority.each do |entity|
     compare_script = "app/etl/#{entity}/compare.sql"
-    cleanup_script = "app/etl/#{entity}/cleanup.sql"
 
     run_script(connection, compare_script) if File.exists?(compare_script)
     run_script(connection, "app/etl/#{entity}/load.sql")
-    run_script(connection, cleanup_script) if File.exists?(cleanup_script)
   end
+
+  run_script(connection, 'app/etl/documents/compare.document-added.sql')
+  run_script(connection, 'app/etl/documents/compare.document-updated.sql')
+  run_script(connection, 'app/etl/documents/compare.document-revision-added.sql')
+  run_script(connection, 'app/etl/documents/compare.document-revision-updated.sql')
+  run_script(connection, 'app/etl/documents/load.sql')
+
+  Dir.glob("**/cleanup.sql") { |path| run_script(connection, path) }
+
 
 rescue PG::Error => error
   puts error.message
 
 ensure
+  connection ||= nil
   connection.close if connection
 end

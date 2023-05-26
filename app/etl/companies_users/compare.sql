@@ -1,3 +1,13 @@
+WITH companies AS (
+    SELECT
+        companies.id
+        , legacy.id legacy_id
+        , legacy.source legacy_source
+    FROM
+        transform.companies_production companies
+        CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_sources::jsonb)
+            AS legacy(id TEXT, source TEXT)
+)
 INSERT INTO transform.companies_users_production_added
 (
     company_id
@@ -10,8 +20,8 @@ FROM
     transform.users_production users
     CROSS JOIN LATERAL JSONB_TO_RECORDSET(legacy_ids::jsonb)
         AS legacy(company_id TEXT, source TEXT)
-    JOIN transform.companies_production companies
-        ON legacy.company_id = ANY(companies.legacy_ids)
+    JOIN companies
+        ON legacy.company_id = companies.legacy_id
         AND legacy.source = companies.legacy_source
     LEFT JOIN transform.companies_users_production companies_users
         ON users.id = companies_users.user_id

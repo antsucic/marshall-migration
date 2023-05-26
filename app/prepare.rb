@@ -26,5 +26,6 @@ rescue PG::Error => error
   puts error.message
 
 ensure
+  connection ||= nil
   connection.close if connection
 end

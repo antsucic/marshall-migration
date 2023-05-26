@@ -13,8 +13,7 @@ CREATE TABLE staging.companies (
 );
 
 CREATE TABLE transform.companies_legacy (
-    legacy_ids TEXT[]
-    , legacy_source VARCHAR(100)
+    legacy_sources JSONB
     , "name" VARCHAR
     , phone VARCHAR
     , status VARCHAR
@@ -29,13 +28,11 @@ CREATE TABLE transform.companies_production (
     , status VARCHAR
     , created_at TIMESTAMP(6) NOT NULL
     , updated_at TIMESTAMP(6) NOT NULL
-    , legacy_ids TEXT[]
-    , legacy_source VARCHAR(100)
+    , legacy_sources JSONB
 );
 
 CREATE TABLE transform.companies_production_added (
-    legacy_ids TEXT[]
-    , legacy_source VARCHAR(100)
+    legacy_sources JSONB
     , "name" VARCHAR
     , phone VARCHAR
     , status VARCHAR
@@ -45,8 +42,7 @@ CREATE TABLE transform.companies_production_added (
 
 CREATE TABLE transform.companies_production_updated (
     id SERIAL PRIMARY KEY
-    , legacy_ids TEXT[]
-    , legacy_source VARCHAR(100)
+    , legacy_sources JSONB
     , "name" VARCHAR
     , phone VARCHAR
     , status VARCHAR

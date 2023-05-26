@@ -24,10 +24,13 @@ FROM
     staging.documents
     LEFT JOIN staging.document_numbers numbers
         ON documents.legacy_id = numbers.legacy_id
+        AND documents.legacy_source = numbers.legacy_source
     LEFT JOIN staging.document_subprojects subprojects
         ON documents.legacy_id = subprojects.legacy_id
+        AND documents.legacy_source = subprojects.legacy_source
     JOIN staging.document_types types
         ON documents.legacy_id = types.legacy_id
+        AND documents.legacy_source = types.legacy_source
     LEFT JOIN public.facilities facilities
         ON documents.legacy_documentable_id = facilities.legacy_id
         AND documents.legacy_source = facilities.legacy_source
@@ -64,8 +67,8 @@ SELECT
     , stage.legacy_folder_id
     , stage.legacy_source
     , CONCAT(
-        CASE WHEN stage.file_source = 2 THEN 'LL_WS2012_LOCAL/' ELSE '' END,
-        RTRIM(RTRIM(RTRIM(stage.file_path, stage.file_name), '\'), '/')
+        CASE WHEN stage.file_source = 2 THEN 'LL_WS2012_LOCAL/' ELSE '' END
+        , REGEXP_REPLACE(REGEXP_REPLACE(stage.file_path, '\\', '/', 'g'), '/' || stage.file_name || '$', '')
     )
     , stage.file_name
     , stage.name
@@ -83,12 +86,16 @@ FROM
     staging.documents stage
     LEFT JOIN staging.document_disciplines legacy_disciplines
         ON stage.legacy_id = legacy_disciplines.legacy_id
+        AND stage.legacy_source = legacy_disciplines.legacy_source
     LEFT JOIN staging.document_discipline_map disciplines
         ON legacy_disciplines.value = disciplines.legacy_value
     LEFT JOIN staging.document_revision_numbers revisions
         ON stage.legacy_id = revisions.legacy_id
+        AND stage.legacy_source = revisions.legacy_source
     LEFT JOIN staging.document_issue_names issue_names
         ON stage.legacy_id = issue_names.legacy_id
+        AND stage.legacy_source = issue_names.legacy_source
     LEFT JOIN staging.document_issue_dates issue_dates
         ON stage.legacy_id = issue_dates.legacy_id
+        AND stage.legacy_source = issue_dates.legacy_source
 ;

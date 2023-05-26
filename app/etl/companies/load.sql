@@ -5,8 +5,7 @@ SET
     , phone = updates.phone
     , status = updates.status
     , updated_at = updates.updated_at
-    , legacy_ids = updates.legacy_ids
-    , legacy_source = updates.legacy_source
+    , legacy_sources = updates.legacy_sources
 FROM
     transform.companies_production_updated updates
 WHERE
@@ -20,7 +19,7 @@ INSERT INTO public.companies
     , status
     , created_at
     , updated_at
-    , legacy_ids
+    , legacy_sources
 )
 SELECT
     "name"
@@ -28,7 +27,7 @@ SELECT
     , status
     , created_at
     , updated_at
-    , legacy_ids
+    , legacy_sources
 FROM
     transform.companies_production_added
 ;

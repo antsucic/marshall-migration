@@ -5,8 +5,7 @@ INSERT INTO transform.companies_legacy
     , status
     , created_at
     , updated_at
-    , legacy_ids
-    , legacy_source
+    , legacy_sources
 )
 SELECT
     "name"
@@ -14,8 +13,13 @@ SELECT
     , CASE WHEN 2 = ANY(ARRAY_AGG(status::integer)) THEN 'active' ELSE 'inactive' END
     , NOW()
     , NOW()
-    , ARRAY_AGG(legacy_id ORDER BY legacy_id)
-    , MAX(legacy_source)
+    , JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'id', legacy_id,
+            'source', legacy_source
+        )
+        ORDER BY legacy_id, legacy_source
+    )
 FROM
     staging.companies
 GROUP BY
@@ -30,8 +34,7 @@ INSERT INTO transform.companies_production
     , status
     , created_at
     , updated_at
-    , legacy_ids
-    , legacy_source
+    , legacy_sources
 )
 SELECT
     production.id
@@ -40,8 +43,7 @@ SELECT
     , production.status
     , production.created_at
     , production.updated_at
-    , production.legacy_ids
-    , COALESCE(production.legacy_source, legacy.legacy_source)
+    , production.legacy_sources
 FROM
     public.companies production
     LEFT JOIN transform.companies_legacy legacy
