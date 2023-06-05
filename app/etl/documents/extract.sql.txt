@@ -19,7 +19,7 @@ SELECT
     , MAX(folders."Folder_Id")
     , MAX(relations."Product_Id")
     , '#{source}'
-    , MAX(items."Display_Name")
+    , COALESCE(MAX(names."Attr_Value"), MAX(items."Display_Name"))
     , MAX(items."Status")
     , MAX(items."Description")
     , MAX(items."Is_Current_Version")
@@ -42,6 +42,9 @@ FROM
         ON COALESCE(viewables."File_Id", printables."File_Id") = files."Id"
     LEFT JOIN staging.document_file_sources sources
         ON files."Vault_Storage_Device_Id" = sources."name"
+    LEFT JOIN "#{source}"."Attribute_Values" names
+        ON items."Id" = names."Object_Id"
+        AND names."Attribute_Id" = 'SYS_ATTR7'
 GROUP BY
     items."Id"
 ;

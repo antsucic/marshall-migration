@@ -50,7 +50,3 @@ WHERE
     OR COALESCE(legacy.legacy_path, '') <> COALESCE(production.legacy_path, '')
     OR COALESCE(legacy.legacy_filename, '') <> COALESCE(production.legacy_filename, '')
 ;
-SELECT pid, age(clock_timestamp(), query_start), usename, query
-FROM pg_stat_activity
-WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%'
-ORDER BY query_start desc;

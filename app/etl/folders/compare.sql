@@ -70,7 +70,6 @@ WHERE
     COALESCE(legacy.name, '') <> COALESCE(production.name, '')
     OR COALESCE(CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END, '') <> COALESCE(production.folderable_type, '')
     OR COALESCE(facilities.id, projects.id, 0) <> COALESCE(production.folderable_id, 0)
-    OR COALESCE(parents.id, 0) <> COALESCE(production.parent_id, 0)
 GROUP BY
     production.id
 ;
