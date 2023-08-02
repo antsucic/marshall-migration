@@ -125,6 +125,7 @@ def folders_columns
   {
     Id: 'Id',
     Display_Name: replace_newlines('Display_Name'),
+    Status: 'Status',
     Create_Date: 'Create_Date',
   }
 end

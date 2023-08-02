@@ -3,6 +3,7 @@ UPDATE
 SET
     parent_id = updates.parent_id
     , "name" = updates.name
+    , hidden = updates.hidden
     , updated_at = updates.updated_at
     , folderable_type = updates.folderable_type
     , folderable_id = updates.folderable_id
@@ -16,6 +17,7 @@ INSERT INTO public.folders
 (
     parent_id
     , "name"
+    , hidden
     , created_at
     , updated_at
     , folderable_type
@@ -26,6 +28,7 @@ INSERT INTO public.folders
 SELECT
     folders.parent_id
     , folders.name
+    , folders.hidden
     , folders.created_at
     , folders.updated_at
     , folders.folderable_type

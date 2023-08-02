@@ -10,6 +10,7 @@ CREATE TABLE staging.folders (
     , legacy_parent_id VARCHAR(36)
     , legacy_source VARCHAR(100)
     , "name" VARCHAR
+    , status VARCHAR
     , created_at TIMESTAMP(6)
 );
 
@@ -19,6 +20,7 @@ CREATE TABLE transform.folders_legacy (
     , legacy_parent_id VARCHAR(36)
     , legacy_source VARCHAR(100)
     , "name" VARCHAR
+    , hidden BOOLEAN
     , created_at TIMESTAMP(6) NOT NULL
     , updated_at TIMESTAMP(6) NOT NULL
 );
@@ -32,6 +34,7 @@ CREATE TABLE transform.folders_production (
     id BIGINT
     , parent_id BIGINT
     , name VARCHAR
+    , hidden BOOLEAN
     , created_at TIMESTAMP(6) NOT NULL
     , updated_at TIMESTAMP(6) NOT NULL
     , folderable_type VARCHAR
@@ -46,6 +49,7 @@ CREATE INDEX ON transform.folders_production (legacy_source);
 CREATE TABLE transform.folders_production_added (
     parent_id BIGINT
     , name VARCHAR
+    , hidden BOOLEAN
     , created_at TIMESTAMP(6) NOT NULL
     , updated_at TIMESTAMP(6) NOT NULL
     , folderable_type VARCHAR
@@ -58,6 +62,7 @@ CREATE TABLE transform.folders_production_updated (
     id SERIAL PRIMARY KEY
     , parent_id BIGINT
     , name VARCHAR
+    , hidden BOOLEAN
     , updated_at TIMESTAMP(6) NOT NULL
     , folderable_type VARCHAR
     , folderable_id BIGINT

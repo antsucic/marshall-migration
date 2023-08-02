@@ -5,6 +5,7 @@ INSERT INTO staging.folders
     , legacy_parent_id
     , legacy_source
     , "name"
+    , status
     , created_at
 )
 SELECT
@@ -13,6 +14,7 @@ SELECT
     , MAX(parents."Parent_Folder_Id")
     , '#{source}'
     , MAX(folders."Display_Name")
+    , MAX(folders."Status")
     , MAX(folders."Create_Date")
 FROM
     "#{source}"."Folders" folders

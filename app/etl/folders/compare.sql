@@ -2,6 +2,7 @@ INSERT INTO transform.folders_production_added
 (
     parent_id
     , "name"
+    , hidden
     , created_at
     , updated_at
     , folderable_type
@@ -12,6 +13,7 @@ INSERT INTO transform.folders_production_added
 SELECT
     parents.id
     , legacy.name
+    , legacy.hidden
     , legacy.created_at
     , legacy.updated_at
     , CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END
@@ -41,6 +43,7 @@ INSERT INTO transform.folders_production_updated
     id
     , parent_id
     , "name"
+    , hidden
     , updated_at
     , folderable_type
     , folderable_id
@@ -49,6 +52,7 @@ SELECT
     production.id
     , MIN(parents.id)
     , MAX(legacy.name)
+    , TRUE = ANY(ARRAY_AGG(legacy.hidden))
     , MAX(legacy.updated_at)
     , CASE WHEN MIN(facilities.id) IS NOT NULL THEN 'Facility' ELSE 'Project' END
     , COALESCE(MIN(facilities.id), MIN(projects.id))
@@ -68,6 +72,7 @@ FROM
         AND legacy.legacy_source = parents.legacy_source
 WHERE
     COALESCE(legacy.name, '') <> COALESCE(production.name, '')
+    OR legacy.hidden <> production.hidden
     OR COALESCE(CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END, '') <> COALESCE(production.folderable_type, '')
     OR COALESCE(facilities.id, projects.id, 0) <> COALESCE(production.folderable_id, 0)
 GROUP BY

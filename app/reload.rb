@@ -23,8 +23,6 @@ clients.each do |client|
 
     print "EXPORTING #{client}.#{table} to #{file}\r"
 
-    #puts "/opt/mssql-tools/bin/sqlcmd -S '#{source_host}' -U '#{source_user}' -P '#{source_pass}' -d '#{client}' -Q '#{query}' -o '#{file}' -h-1 -s'\t' -w 65535 -W"
-
     system("/opt/mssql-tools/bin/sqlcmd -S '#{source_host}' -U '#{source_user}' -P '#{source_pass}' -d '#{client}' -Q '#{query}' -o '#{file}' -h-1 -s'\t' -w 65535 -W")
 
     psql_command = "PGPASSWORD=#{target_pass} PGOPTIONS=\"--search_path='#{client}'\" psql -h #{target_host} -p #{target_port} -U #{target_user} -d #{target_name}"
