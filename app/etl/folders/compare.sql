@@ -59,8 +59,8 @@ SELECT
 FROM
     transform.folders_legacy legacy
     JOIN transform.folders_production production
-         ON legacy.legacy_id = production.legacy_id
-         AND legacy.legacy_source = production.legacy_source
+        ON legacy.legacy_id = production.legacy_id
+        AND legacy.legacy_source = production.legacy_source
     LEFT JOIN public.facilities facilities
         ON legacy.legacy_folderable_id = facilities.legacy_id
         AND legacy.legacy_source = facilities.legacy_source
@@ -72,6 +72,7 @@ FROM
         AND legacy.legacy_source = parents.legacy_source
 WHERE
     COALESCE(legacy.name, '') <> COALESCE(production.name, '')
+    OR COALESCE(parents.id, 0) <> COALESCE(production.parent_id, 0)
     OR legacy.hidden <> production.hidden
     OR COALESCE(CASE WHEN facilities.id IS NOT NULL THEN 'Facility' ELSE 'Project' END, '') <> COALESCE(production.folderable_type, '')
     OR COALESCE(facilities.id, projects.id, 0) <> COALESCE(production.folderable_id, 0)
